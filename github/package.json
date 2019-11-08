@@ -1,0 +1,19 @@
+{
+  "name": "flyte_github",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Flyte Github Utilities",
+  "author": {
+    "name": "Flyte Engineering",
+    "email": "dev@flyte.org>"
+  },
+  "contributors": [
+    {
+      "name": "George Snelling",
+      "email": "georgesn@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "@octokit/rest": "*"
+  }
+}
