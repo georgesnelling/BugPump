@@ -1,24 +1,37 @@
+//
 // Simple CLI for working with Flyte github API
+//
 
-var GitHub = require("@octokit/rest")  // https://octokit.github.io/rest.js
 
-var init = {
-  auth: process.env.GITHUB_TOKEN,
+// https://octokit.github.io/rest.js
+var Octokit = require("@octokit/rest")
+
+
+// soon to be translated into 90 languages
+const strs = {
+  missing_token: "env var GITHUB_TOKEN must be defined"
 }
 
-if (!init.auth) {die(messages.auth)}
 
-var gh = new GitHub({init})
+// only one way to auth: Github personal access tokens as an env var
+// args would be nice
+const token = process.env.GITHUB_TOKEN
+if (!token) die(strs.missing_token)
 
-console.log(gh.users)
 
-// var user = gh.users.getAuthenticated()
+// init
+const gh = new Octokit({ auth: "token " + token })
 
-var messages = {
-  auth: "env var GITHUB_TOKEN must be defined."
-}
 
+// make sure we're singed in properly
+gh.users
+  .getAuthenticated()
+  .then(user => { console.log("user:", user) })
+  .catch(err => { die(err) })
+
+
+// don't panic, just die
 function die(msg) {
-  if (msg) console.error(msg)
+  console.error(msg)
   process.exit(1)
 }
