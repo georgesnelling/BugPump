@@ -7,10 +7,75 @@
 var Octokit = require("@octokit/rest")
 var _ = require("lodash")
 
+// only one way to auth: Github personal access tokens as an env var
+// args would be nice
+const token = process.env.GITHUB_TOKEN
+if (!token) reject(strs.missing_token)
 
+// init
+const ok = new Octokit({ auth: "token " + token })
+
+
+// which repo
 const owner = 'georgesnelling'
 const repo = 'stuff'
 
+// execute main
+main()
+
+// main
+function main() {
+
+  authenticate()
+    .then(res => {
+      console.log("user: ", {login: res.data.login, id: res.data.id})
+      listIssues({state: 'open'})
+        .then(issues => {
+          console.log("Count of issues: ", issues.length)
+          issues.forEach(issue => {
+            console.log("issue", issue)
+          })
+        })
+    })
+    .catch(err => { die(err) })
+}
+
+
+// make sure we're singed in properly
+async function authenticate() {
+
+  return new Promise(function(resolve, reject) {
+    ok.users
+      .getAuthenticated()
+      .then(response => {
+        if (response.data && response.data.id) {
+          resolve(response)
+        } else {
+          reject(new Error('ERROR: Authentication failed', response))
+        }
+      })
+      .catch(err => { reject(err) })
+    })
+  })
+}
+
+
+// get issues async with a filter param
+async function listIssues(ops) {
+
+  // ops are filter params to github's listIssues
+  _.merge(ops, { owner: owner, repo: repo })
+
+  // this is a weird command due to the design of Oktokit
+  const issueCursor = ok.issues.listForRepo.endpoint.merge(ops)
+
+  // returns and arry of issues or an error
+  return new Promise(function(resolve, reject) {
+    ok.paginate(issueCursor)
+      .then(issues => { resolve(issues) })
+      .catch(err => { reject(err) })
+  })
+}
 
 // soon to be translated into 90 languages
 const strs = {
@@ -18,52 +83,8 @@ const strs = {
 }
 
 
-// only one way to auth: Github personal access tokens as an env var
-// args would be nice
-const token = process.env.GITHUB_TOKEN
-if (!token) die(strs.missing_token)
-
-
-// init
-const gh = new Octokit({ auth: "token " + token })
-
-
-// make sure we're singed in properly
-gh.users
-  .getAuthenticated()
-  .then(res => {
-    if (res.data && res.data.id) {
-      console.log("user: ", res.data.login, "id: ", res.data.id)
-    } else {
-      die('ERROR: Authentication failed')
-    }
-  })
-  .catch(err => { die(err) })
-
-
-async function listIssues(ops) {
-  _.merge(ops, { owner: owner, repo: repo })
-  const issueCursor = gh.issues.listForRepo.endpoint.merge(ops)
-
-  gh.paginate(issueCursor)
-    .then(issues => { console.log(issues); return issues })
-    .catch(err => die(err))
-}
-
-
-listIssues({state: 'open'})
-  .then(issues => {
-    console.log('ran')
-    // console.log("Count of issues: ", issues.length)
-    // issues.forEach(issue => {
-    //  console.log("issue", issue)
-    // })
-  })
-  .catch(err => { die(err) })
-
-
 // don't panic, just die
-function die(msg) {
-  console.error(msg || 'Error')
+var die = function(err) {
+  console.error(err || 'Error')
   process.exit(1)
 }
