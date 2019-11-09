@@ -2,17 +2,17 @@
 // Simple CLI for working with Flyte github API
 //
 
+// everyone's favorite
+const _ = require("lodash")
 
 // https://octokit.github.io/rest.js
-var Octokit = require("@octokit/rest")
-var _ = require("lodash")
+const Octokit = require("@octokit/rest")
+
 
 // only one way to auth: Github personal access tokens as an env var
 // args would be nice
 const token = process.env.GITHUB_TOKEN
 if (!token) reject(strs.missing_token)
-
-// init
 const ok = new Octokit({ auth: "token " + token })
 
 
@@ -45,8 +45,7 @@ function main() {
 async function authenticate() {
 
   return new Promise(function(resolve, reject) {
-    ok.users
-      .getAuthenticated()
+    ok.users.getAuthenticated()
       .then(response => {
         if (response.data && response.data.id) {
           resolve(response)
@@ -55,27 +54,27 @@ async function authenticate() {
         }
       })
       .catch(err => { reject(err) })
-    })
   })
 }
 
 
-// get issues async with a filter param
+// get issues with a filter param
 async function listIssues(ops) {
 
-  // ops are filter params to github's listIssues
   _.merge(ops, { owner: owner, repo: repo })
 
   // this is a weird command due to the design of Oktokit
   const issueCursor = ok.issues.listForRepo.endpoint.merge(ops)
 
-  // returns and arry of issues or an error
+  // returns an arry of issues or an error, max number of issues
+  // returned is up to github: 3,000 as of Nov 2019
   return new Promise(function(resolve, reject) {
     ok.paginate(issueCursor)
       .then(issues => { resolve(issues) })
       .catch(err => { reject(err) })
   })
 }
+
 
 // soon to be translated into 90 languages
 const strs = {
@@ -84,7 +83,7 @@ const strs = {
 
 
 // don't panic, just die
-var die = function(err) {
+var die = function(err, code) {
   console.error(err || 'Error')
-  process.exit(1)
+  process.exit(code || 1)
 }
