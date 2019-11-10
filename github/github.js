@@ -42,7 +42,7 @@ async function authenticate() {
 }
 
 
-// get issues with a filter param
+// get gitHub issues with a filter param
 async function getIssues(filter) {
 
   _.merge(filter, { owner: owner, repo: repo })
@@ -50,7 +50,7 @@ async function getIssues(filter) {
   // this is a confusing sync command due to the design of Oktokit
   const issueCursor = ok.issues.listForRepo.endpoint.merge(filter)
 
-  // returns a promise that returns an array of issues
+  // returns a promise that returns an array of issues or an error
   return ok.paginate(issueCursor)
 }
 
@@ -94,14 +94,17 @@ const strs = {
   missing_token: "env var GITHUB_TOKEN must be defined"
 }
 
+
 // lazy
 let log = console.log
+
 
 // don't panic, just die
 let die = function(err, code) {
   console.error(err || 'Error')
   process.exit(code || 1)
 }
+
 
 // main
 function main() {
@@ -119,5 +122,5 @@ function main() {
     .catch(err => { die(err) })
 }
 
-// execute main
+// run main
 main()
