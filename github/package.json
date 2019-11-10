@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "lodash": "*",
-    "@octokit/rest": "*"
+    "@octokit/rest": "*",
+    "csv-parser": "*"
   }
 }

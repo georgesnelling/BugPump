@@ -1,0 +1,1130 @@
+Priority,Issue Type,Status,Issue key,Issue id,Parent id,Summary,Assignee,Reporter,Created,Custom field (Epic Link),Description
+Major,Task,Open,MB-1946,1037205,,[DataCatalog] Basemap client mirrors writes to DataCatalog V2,achan,achan,11-08-2019 2:16 PM,MB-1524,
+Major,Task,Open,MB-1945,1037201,,[DataCatalog] Implement Listing with filters on ,achan,achan,11-08-2019 2:14 PM,MB-1524,
+Major,Task,Open,MB-1944,1037192,,Reorganize and consolidate resource management across admin,krogan,krogan,11-08-2019 2:10 PM,MB-1525,
+Major,Task,Open,MB-1942,1036366,,Allowing users to upload json files from the UI,,changhonghsu,11-08-2019 8:25 AM,MB-1563,"For machine learning users there are often needs to specify quite a lot of parameters (10^1 - 10^2) for each execution. Allowing users to upload a JSON file via UI might simplify their workflow and make ""Launching via UI"" more accessible"
+Critical,Task,Open,MB-1940,1036094,,Workflow inputs randomly reorder themselves while I'm reading them,matthewsmith,kstaley,11-07-2019 4:56 PM,MB-1525,"When I click ""View Inputs and Outputs"" for a running Flyte workflow, the inputs are listed in a random order, and they _randomly reorder themselves every 10 seconds as I'm reading them_ (see attached video).
+
+Over half the time I spend interacting with the Flyte UI is spent copying/pasting inputs from one existing workflow into the ""Launch Workflow"" dialog box (there is [another ticket|https://jira.lyft.net/browse/MB-1804] about that). With this bug, the new UI is practically unusable for me.
+
+I think the inputs should consistently display in the same order that they appear in the ""Launch Workflow"" dialog."
+Major,Task,Open,MB-1939,1035887,,Remove unused pipelines from Flyte production UI,,jintaozhang,11-07-2019 3:18 PM,MB-1838,"Hi,Flyte,
+     There are 8 production pipelines in the Flyte UI for the forecasting team at here: https://flyte-internal.lyft.net/console/projects/forecastingpipelines/workflows?domain=production
+
+The below three are unused, could you please remove them from the UI?
+1) https://flyte-internal.lyft.net/console/projects/forecastingpipelines/domains/production/workflows/workflows.delphi_metrics.DelphiWorkflowMetrics
+
+2) https://flyte-internal.lyft.net/console/projects/forecastingpipelines/domains/production/workflows/workflows.example_workflow.ExampleWorkflow
+
+3) https://flyte-internal.lyft.net/console/projects/forecastingpipelines/domains/production/workflows/workflows.when_to_drive.ExampleWorkflow
+
+Thanks!
+"
+Major,Bug,Open,MB-1938,1035773,,Aborting a workflow doesn't clean up spark resources,,krogan,11-07-2019 2:47 PM,MB-1525,"See https://lyft.slack.com/archives/C5H3A2665/p1573165459103700
+
+Although the workflow CRD was terminated the pods associated with the spark job were still running:
+
+$ k -n etamodels-development get pod | grep w7i9c53vb5
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-1      1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-10     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-11     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-12     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-13     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-14     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-15     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-16     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-18     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-19     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-2      1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-20     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-21     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-22     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-23     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-24     1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-25     1/1     Running       0          4h31m
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-3      1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-4      1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-5      1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-6      1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-7      1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-8      1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-1572978464247-exec-9      1/1     Running       0          2d4h
+w7i9c53vb5-read-mapbox-data-task-0-driver                    1/1     Running       0          2d4h"
+Critical,Bug,Open,MB-1937,1035602,,Can't trigger Flyte 2.0 workflow without specifying sha (from ETL on staging),matthewsmith,gwillits,11-07-2019 1:51 PM,MB-1525,"in staging we can't trigger from ETL without specifying a sha
+
+`A sha must be specified when kicking off a workflow that isn't in production.`
+
+this behavior is different from before, so we don't have logic to get the sha (we wan't the most recent version)
+
+
+We run workflows on staging regularly (every week)
+https://etl-staging.lyft.net/admin/airflow/graph?dag_id=driver_growth_flyte_incentives"
+Major,Task,Open,MB-1936,1035012,,Support additional input types in the Launch UI,rschott,rschott,11-07-2019 10:39 AM,MB-1563,We don't currently support list/map or some of the less common types. This task is to at least implement list/map and explore if there is anything we can do about supporting the other types.
+Minor,Bug,Open,MB-1935,1034275,,Remove the redundant `cacheable` flag given the presence of `cacheable_version` for tasks,achan,changhonghsu,11-06-2019 4:32 PM,MB-1924,
+Major,Task,Open,MB-1934,1033479,,Figure out Tagging PR's for a specific release and batch releasing (ideas welcome),,gsnelling,11-06-2019 11:35 AM,MB-1867,
+Major,Task,Open,MB-1933,1033476,,"Set up owner files in all repos (some exist, but there are some holes)",gsnelling,gsnelling,11-06-2019 11:35 AM,MB-1867,
+Major,Task,Open,MB-1932,1033464,,Set up Github issues and start using them to track major changes,gsnelling,gsnelling,11-06-2019 11:33 AM,MB-1867,
+Major,Task,Open,MB-1931,1033462,,Set up goreleaser so that binaries are released,,gsnelling,11-06-2019 11:33 AM,MB-1867,
+Major,Task,Open,MB-1930,1033459,,Set up coverage goals (codecov.io) for all repos and unit tests. ,,gsnelling,11-06-2019 11:32 AM,MB-1867,
+Major,Task,Open,MB-1929,1031168,,Try the L5 VPN instructions,krogan,gsnelling,11-05-2019 10:39 AM,MB-1525,Email from Victor with VPN instructions.  
+Major,Task,Open,MB-1928,1030215,,demo bug,jburns,agale,11-04-2019 4:10 PM,MB-1867,!Screen Shot 2019-11-04 at 3.49.38 PM.png!
+Critical,Bug,Open,MB-1926,1026170,,Timedelta Input Type Doesn't Appear to Work in UI,rschott,matthewsmith,10-31-2019 7:25 PM,MB-1525,"[https://flyte.lyft.net/console/projects/intrepidworkflows/domains/development/executions/wf9nok0xbn]
+
+Should be 1 day, but appears to be something else–like 0.  The result is a loop from start -> end time with a timedelta step runs infinitely."
+Minor,Task,Open,MB-1925,1025101,,Cleanup Sandbox Admin config to remove references to AWS,krogan,kumare,10-31-2019 10:15 AM,MB-1924,It is confusing if you are deploying sandbox locally or on GKE to have dummy aws config
+Critical,Task,Open,MB-1923,1023998,,GPU metrics exporter is not working on flyte clusters,ssingh,kumare,10-30-2019 1:55 PM,MB-1838,"GPU metrics exporter enables monitoring gpu usage. This also helps in tracking which team is using it.
+
+https://github.com/lyft/gpu-metrics-exporter"
+Critical,Task,Open,MB-1922,1023213,,Update S3 prefix level retention for Lyft-modelbuilder bucket.,habuelfutuh,mvartak,10-30-2019 9:57 AM,MB-1524,"Lyft-modelbuilder S3 bucket contains Hive and non-Hive data. Hence the retention needs to be set at S3 prefix level. Chatted with Haytham and they are actively working on it. This ticket is to keep track of that work.
+
+Link to the Slack conversation.
+
+https://lyft.slack.com/archives/DJVTEPPPB/p1571778292000400"
+Major,Task,Open,MB-1920,1021224,,"flyteidl should check installed versions of context, pflags",habuelfutuh,krogan,10-29-2019 10:15 AM,MB-1525,while generating flyteidl i ran into issues where my local binaries for context and pflags existed but were the incorrect version. this produced generated mocks in flyteidl which caused travis builds to fail with an unexpected diff
+Major,Task,Open,MB-1914,1017303,,Improve plugin extensibility doc,kumare,gsnelling,10-25-2019 2:42 PM,MB-1737,
+Major,Task,Open,MB-1913,1017239,,Auditing in Admin authentication,ytong,ytong,10-25-2019 2:13 PM,MB-1525,"Currently all the audit function does is print out the email, and the endpoint.  We need to better log all the info, keep track of the output (like executions launched), and write to a db table."
+Critical,Task,Open,MB-1912,1017228,,Porting/building/polishing cabin tidiness classifier workflow for Kubecon Demo,changhonghsu,changhonghsu,10-25-2019 2:10 PM,MB-1525,
+Major,Task,Open,MB-1910,1017221,,Prepare refactorator for auth-based config defaults,krogan,krogan,10-25-2019 2:08 PM,MB-1848,
+Major,Task,Open,MB-1909,1017214,,PyPi Automation (Boilerplate),matthewsmith,matthewsmith,10-25-2019 2:06 PM,MB-1867,
+Major,Bug,Open,MB-1905,1016663,,Instancecheck error on import,matthewsmith,jzhou,10-25-2019 9:57 AM,MB-1924,"I get this error:
+
+  File ""/mnt/user-home/src/priceoptimizeroffline/common/workflows/pricing_rate_cards_workflow.py"", line 221, in PricingRateCardsWorkflow
+    rate_card_table_name = Output(rate_card_hive_table_job.outputs.rate_card_table_name, sdk_type=Types.String)
+  File ""/venv/lib/python3.6/site-packages/flytekit/sdk/workflow.py"", line 40, in __init__
+    sdk_type=_type_helpers.python_std_to_sdk_type(sdk_type) if sdk_type else None,
+  File ""/venv/lib/python3.6/site-packages/flytekit/common/types/helpers.py"", line 54, in python_std_to_sdk_type
+    out = e.python_std_to_sdk_type(t)
+  File ""/venv/lib/python3.6/site-packages/flytekit/type_engines/default/flyte.py"", line 69, in python_std_to_sdk_type
+    elif isinstance(t, _base_sdk_types.FlyteSdkType):
+  File ""/venv/lib/python3.6/site-packages/flytekit/models/common.py"", line 15, in __instancecheck__
+    return super(FlyteABCMeta, cls).__instancecheck__(instance)
+TypeError: __instancecheck__() missing 1 required positional argument: 'instance'
+
+When attempting to import certain workflows with launch plans and outputs. 
+
+Not sure why it happens with certain workflows and not others."
+Minor,Task,Open,MB-1904,1016406,,Relaunch execution with same parameters but different version,,nmorin,10-25-2019 5:01 AM,MB-1924,"This would be great for development – when using the UI without this, we need to copy-paste the inputs, which is made difficult by the fact that the order in ""View Inputs & Outputs"" is not the same as in the ""Launch Workflow"" modal."
+Major,Bug,Open,MB-1903,1012329,,Console sends `undefined` instead of `false` for unchecked toggle switches,rschott,rschott,10-22-2019 2:42 PM,MB-1838,"For workflows which take boolean values, the Console renders a toggle switch. When the toggle remains switched to ""off"", the resulting computed value is `undefined` instead of `false`. This translated to passing no value for the input when making the launch request.
+For required inputs _with no default value_, that will result in a 400.
+
+At the very least, if a boolean value is required and has no default, we should be translating an unchecked toggle to `false` to make sure the launch request succeeds.
+
+Once default values are implemented for the form, this should become less of an issue."
+Major,Task,Open,MB-1902,1011825,,Port flyteops to Python 3,matthewsmith,aagrawal,10-22-2019 11:39 AM,MB-1525,"The https://github.com/lyft/flyteops repo is currently using Python 2 and needs to be ported to Python 3 before the Python 2 EOL on January 1, 2020. We've got a migration guide at https://docs.lyft.net/eng/py3k/py3k.html.
+
+cc [~jburns] who I chatted to about this in Seattle last week, assigning to you for triage"
+Critical,Bug,Open,MB-1900,1010522,,sidecar task logging broken in the UI,krogan,agreenhall,10-21-2019 4:33 PM,MB-1838,"sidecar task logging seems to be broken in the UI:
+in the UI getting: `k8s task failed, error info not available` 
+and when following the cloudwatch links:
+`Log stream not found`
+example: https://flyte.lyft.net/console/projects/simulatorworkflows/domains/development/executions/i3krfqgqfk"
+Minor,Task,Open,MB-1899,1007081,,Plumb through input rank for rendering in spec-order in the UI,matthewsmith,agale,10-18-2019 11:58 AM,MB-1563,
+Minor,Bug,Open,MB-1897,1005682,,Running task doesn't have a duration in Flyte 2.0 UI,rschott,chopkins,10-17-2019 2:50 PM,MB-1563,!image-2019-10-17-14-49-55-435.png!
+Critical,Bug,Open,MB-1896,1005649,,Cannot filter dynamic tasks by state in Flyte 2 UI,agale,chopkins,10-17-2019 2:34 PM,MB-1838,"In the Flyte 1 UI, there was an ability to filter each of my subtasks/dynamic tasks by state. That no longer works in the Flyte 2 UI and makes it incredibly hard to understand what is currently running vs queued, vs failing.   We also lose the color coordination between Running/Succeeded from the task status and the subtask status which is confusing. 
+
+ 
+
+!image-2019-10-17-14-33-34-804.png!"
+Minor,Bug,Open,MB-1895,1005644,,Inputs for a workflow are in a different order each time I launch the workflow,rschott,chopkins,10-17-2019 2:31 PM,MB-1924,Order or inputs changes each time I try to launch a workflow in Flyte 2. 
+Critical,Bug,Open,MB-1894,1005642,,Workflow shows task execution as Succeeded but sub tasks are still running ,agale,chopkins,10-17-2019 2:31 PM,MB-1838,!image-2019-10-17-14-30-47-815.png!
+Major,Task,Open,MB-1893,1005271,,[HELLO WORLD] Platform-Specified Defaults for Configs,matthewsmith,matthewsmith,10-17-2019 12:16 PM,MB-1867,
+Critical,Bug,Open,MB-1892,1005264,,[HELLO WORLD] CreateProject does not result in changes until FlyteAdmin Restarts,habuelfutuh,matthewsmith,10-17-2019 12:14 PM,MB-1867,
+Major,Task,Open,MB-1891,1004495,,Implement Closures to replace and generalize dynamic workflows,habuelfutuh,habuelfutuh,10-16-2019 10:36 PM,MB-1563,"[go/flyte-dynamic-wf|http://go/flyte-dynamic-wf]"
+Major,Sub-task,Open,MB-1890,1004491,1004488,"[Propeller] Set the right ""parentID"" when sending events for sub-nodes",,habuelfutuh,10-16-2019 10:34 PM,,
+Major,Sub-task,Open,MB-1889,1004490,1004488,[Console] Use the new datamodel to query and present the UI,,habuelfutuh,10-16-2019 10:34 PM,,
+Major,Sub-task,Open,MB-1888,1004489,1004488,[Admin] Change relationship to node->node (1->many) relationship,,habuelfutuh,10-16-2019 10:34 PM,,
+Major,Task,Open,MB-1887,1004488,,Rework dynamic node relationships in data model,habuelfutuh,habuelfutuh,10-16-2019 10:32 PM,MB-1838,"Admin currently allows tasks to be parents of other nodes (1->many) and nodes to be parents of other tasks (1-1). This has lead to some confusion/assumptions:
+ * While tasks do yield nodes, they, tasks, finish executing well before those nodes start. It's not entirely accurate to have this task->node parent relationship
+ * Due to how they are currently presented in the data model, the nested UX looks confusing with the task row showing success and sub-rows showing running (indicating the yielded nodes are still running).
+
+We have talked separately on different occasions about how this should ideally be represented. This task is to track the concrete steps towards a better model."
+Major,Task,Open,MB-1886,1003963,,Open-source lyft/protocgenerator or deprecate it,habuelfutuh,rschott,10-16-2019 2:51 PM,MB-1563,"The lyft/protocgenerator repo handles building of a custom Docker image we use for doing protobuf code generation. As far as I can tell, we're using it solely because the base image (namely/protoc-all) doesn't include the protoc-gen-validate plugin.
+
+ 
+
+We are in a bit of a weird spot right now because the built Docker images are public, but the github repo is private.
+
+ 
+
+Some options are:
+ * Open-source the lyft/protocgenerator repo. This becomes more code for us to maintain. It's duplicating a lost of the interface of the base image.
+ * Deprecate/remove the custom image and find a way to use the base image instead.
+
+The decision depends partly on whether we want to follow through with the validation support we started. If we want to remove the validation functionality, we can ditch the custom image."
+Critical,Bug,Open,MB-1885,1003754,,FlyteAdmin stopped processing scheduling events,krogan,kumare,10-16-2019 1:56 PM,MB-1525,"This happened in L5. Restarting admin fixed the issue. It seems there is some background executor go-routing which might be crashing and that is not handled well.
+Also logging for the scheduling jobs is very sparse and hard to debug
+
+cc @vbarinov"
+Critical,Bug,Open,MB-1883,1003036,,400 error when launching from Flyte 2.0 UI,rschott,gwillits,10-16-2019 10:55 AM,MB-1525,"when I launch from the Flyte 2.0 UI I get a 400 error (Request failed with status code 400) unless the boolean input is set to True
+
+- workflow: ScheduleElasticityWorkflow
+- seeing this on both dev & staging in the UI but not when launching from a script (script here - https://github.com/lyft/detargetingapi/blob/master/app/scripts/schedule_elasticity_workflow.py)
+- not seeing this on Flyte 1 UI"
+Major,Bug,Open,MB-1882,1003035,,"Parent nodes are sometimes marked as ""succeeded"" even if their children are still running",habuelfutuh,nmorin,10-16-2019 10:55 AM,MB-1525,"I'd expect parent nodes to only be marked ""succeeded"" if their children succeeded.
+
+One execution where this was the case: https://flyte.lyft.net/console/projects/avmapworkflows/domains/development/executions/f079c9ec254904b8eb93"
+Major,Task,Open,MB-1880,1001309,,Add override sha for relaunching workflows via flyte-cli,matthewsmith,jzumbrum,10-15-2019 12:58 PM,MB-1563,"Each month we encounter a set of failed executions (bug in our code, partner changes contract without notice, unexpected scaling limits).  
+
+Flyte-cli has a great interface for getting the list of failures such that they can be piped into the relaunch workflows command, but relaunching doesn't allow us to specify a newer sha where we have fixed the problem causing the failures.  
+
+Our current workaround involves writing a bit of python code, re-familiarizing with the flytekit sdk, etc. which takes us a couple hours every time it happens.
+
+Request is to add a parameter to flyte-cli relaunch for workflow sha to use in lieu of the original one.  "
+Critical,Task,Open,MB-1879,1001250,,Beef up API server machines,,aswaminathan,10-15-2019 12:40 PM,MB-1525,Increase the size of API server machines
+Major,Task,Open,MB-1878,1001249,,Metrics and alarms for Resource quota rejections,,aswaminathan,10-15-2019 12:40 PM,MB-1525,
+Major,Task,Open,MB-1877,1001248,,Add workflow level timeouts,,aswaminathan,10-15-2019 12:40 PM,MB-1563,
+Major,Task,Open,MB-1876,1001247,,Metrics for Mutating and Validating webhooks and alarms,aswaminathan,aswaminathan,10-15-2019 12:40 PM,MB-1525,
+Major,Task,Open,MB-1875,1001246,,Retry Backoff for all API server errors,aswaminathan,aswaminathan,10-15-2019 12:39 PM,MB-1525,Propeller should have a backoff on API errors.
+Major,Task,Open,MB-1873,996914,,two feature requests for Flyte2,matthewsmith,diwu,10-11-2019 2:30 PM,MB-1838,"1. The notification email doesn’t include the workflow name, instead it just attaches a random string. It’s difficult to figure out which workflow succeeds/fails. Could you add the workflow name to the email titles?
+2. The hyperlink in the email doesn’t allow us to click and get to the logs. We have to manually copy&paste. Could you fix it?
+Both these features are supported in Flyte1, but no longer exist in Flyte2. Thanks! "
+Major,Task,Open,MB-1872,996877,,Notebook as Flyte Tasks,matthewsmith,akhurana,10-11-2019 2:12 PM,MB-1525,
+Blocker,Task,Open,MB-1868,996566,,Add entropy string sniffer to Flyte pre-checkin hook,jburns,gsnelling,10-11-2019 11:54 AM,MB-1525,"For obvious reasons.  If it finds a secret it will be post checkin, and we will need to immediately role keys, but at least we will find it earlier than we did last time.  Might want to upstream to all lyft builds.  "
+Major,Task,Open,MB-1866,993553,,show create_at time and queued time in Flyte UI,,hzhu,10-09-2019 1:51 PM,MB-1525,"I made a change to update start_time as the actually execution time. Now create_at time is different from the start_time; it'll be nice to show both and show queue_time by the diff of the number"
+Critical,Task,Open,MB-1865,991265,,[DEMO NICE-TO-HAVE] Animations for the graph on execution,rschott,agale,10-08-2019 1:20 PM,MB-1867,
+Major,Task,Open,MB-1861,989700,,Implement pkce compliant flow in cli,krogan,krogan,10-07-2019 2:42 PM,MB-1848,
+Major,Bug,Open,MB-1860,989116,,Task Execution Can Render Out of Order,rschott,matthewsmith,10-07-2019 11:49 AM,MB-1525,"[https://flyte.lyft.net/console/projects/spots/domains/development/executions/feb963e8f132a46b397e]
+
+See image in comment below"
+Minor,Task,Open,MB-1859,987286,,Revisit subtask UX,agale,agale,10-04-2019 2:38 PM,MB-1525,
+Major,Task,Open,MB-1857,987246,,Sidecar missing completed pods,habuelfutuh,akhurana,10-04-2019 2:16 PM,MB-1525,"[https://lyft.slack.com/archives/C5H3A2665/p1570219700351900]
+
+Some of the pods have their main containers finished but were still not marked as completed.
+
+ 
+
+ "
+Major,Bug,Open,MB-1856,986438,,Cant see launch_plan name in Flyte UI for long named workflows,rschott,rorendovici,10-04-2019 7:55 AM,MB-1525,"when using a workflow with a long name/path (https://flyte.lyft.net/console/projects/avmapworkflows/domains/development/workflows/app.workflows.import_map_statements_workflow.MapFragmentStatements) theres no way to see which launch_plan its actually using, since the name is cut off, and also cant select it out of there, or paste a value in there. "
+Blocker,Bug,Open,MB-1855,985114,,Hardcoded Token In Public Repository Allows Access to Customer Data,kumare,secbugfilerbot,10-03-2019 10:20 AM,MB-1525,"Link:		https://hackerone.com/reports/707186  
+Date:		2019-10-03 14:59:17 UTC  
+By:		bakewell  
+Weakness:	Information Disclosure  
+  
+Details:  
+# Summary:
+A token was found within a publicly accessible docker image that allows access to Lyft's ""Qubole"" service. This service contains a large number of tables (~7000) containing what appears to be personal customer data, as well as technical information relating to Lyft's infrastructure. Additionally, an SSH key for Lyft's GitHub ""lyft-gitreadonly-go"" account was found, which allows access to private git repos.
+
+##Location:
+The affected docker image is:
+`lyft/flytepropeller`
+The tags containing tokens appear to be all tags with the word ""builder"" on the end and can be accessed using e.g:
+`docker pull lyft/flytepropeller:0478cd2e7ccffb718a10c072166db40b69b83441-builder`
+
+This image contains a ""Qubole"" access token within the following files:
+```
+/go/pkg/dep/sources/ssh---git@github.com-lyft-flytedynamicjoboperator/deploy/cr.yaml
+/go/pkg/dep/sources/ssh---git@github.com-lyft-flytedynamicjoboperator/pkg/tests/integration_test.go
+```
+
+The token is:
+`906e58d1dff048ed89684b086b89a84b294f312069fd4b5887c61e5cfc8dd646`
+
+Additionally, build artefacts for flytepropeller and the source code for the private `lyft/flytequboleoperator` and `lyft/flytedynamicjoboperator` repos are contained within the image.
+
+The GitHub SSH key is located in the docker history of several tags, such as ""v0.2.41-builder""
+To check this, run `docker pull lyft/flytepropeller:v0.2.41-builder`, then run `docker image history --no-trunc lyft/flytepropeller:v0.2.41-builder`. You don't need to run the container.
+
+## Impact
+
+#Qubole
+
+The Qubole access token allows access to ~7000 tables, as well as numerous other calls that can be made from the Qubole API. Tables can be accessed using ""Hive"" commands to retrieve the contents. We strictly limited this to avoid accessing customer data, so Lyft will need to investigate themselves to determine the full extent to which customer data or sensitive material could have be exfiltrated by a malicious attacker. A few examples were viewed to determine whether the data was from a development or production environment, and we believe it to be production data based on the presence of several ""wearehackerone"" email addresses in a table, plus references to the word ""production"" scattered about.
+
+As an example, the `dim_enterprise_org_members_v2` table was found to contain email addresses, and the `dim_support_agent_details` showed a name of what we assume to be a support agent.
+
+The Qubole API also allowed us to:
+* Execute commands on the underlying cluster host operating system
+* View historic commands run by other users, plus logs and output
+* View account details for ~700 Lyft staff
+* View Cluster details
+* View ""Customer metastore"" data, which includes details such as ""db_host"":""hive-metastore-production.cu3yieho9vrv.us-east-1.rds.amazonaws.com"",""db_user"":""lyftmaster"" (the password is also retrievable from the host server)
+* Access the `lyft-modelbuilder` and `lyftqubole-iad` S3 buckets
+
+Further Qubole operations that we didn't test, but could have serious impact include:
+* Adding and removing users
+* Regenerating SSH keys, changing AWS ID and Secret ID (to change where files are uploaded to, e.g. to an attackers AWS environment)
+
+#Github
+	
+The GitHub SSH key allows access to private git repositories, including the following:
+```
+github.com/lyft/flyte/
+github.com/lyft/flytedynamicjoboperator/
+```
+Further info can be retrieved using git log -p to observe historic changes from these repos.
+
+# Reproducing Qubole Access:
+
+The following cURL request retrieves the list of Lyft Qubole accounts:
+```
+curl -X GET -H ""X-AUTH-TOKEN:906e58d1dff048ed89684b086b89a84b294f312069fd4b5887c61e5cfc8dd646"" -H ""Content-Type: application/json"" -H ""Accept: application/json"" \
+""https://api.qubole.com/api/v1.2/accounts/get_users""
+```
+
+The following command submits a request to list the contents of ... [truncated]"
+Minor,Task,Open,MB-1854,984660,,Split queueing time and execution time from the task duration,habuelfutuh,hzhu,10-03-2019 3:58 AM,MB-1525,"is currently the task duration = queueing time  + execution time?
+Can we split them into different fields?
+
+Why: we are doing some performance assessment for our tasks, the queueing time would affect the assessment. And it will also be great to know the queueing time"
+Major,Bug,Open,MB-1853,984232,,multiple workflows launched from single execute command,habuelfutuh,ytong,10-02-2019 4:13 PM,MB-1525,"Haoyue ran this code
+https://github.com/lyft/avvisualtrajectories/pull/76/files#diff-d33a16f44b27a9cecfeff8ccf7bbdeaeR997
+
+launching this execution:
+https://flyte.lyft.net/console/projects/trajectories/domains/development/executions/f85d80ca1011549c5b6c
+
+which failed seven times due to imagepullbackoff and then succeeded.  However, this one task launched three identical workflows instead of just one.
+
+https://flyte.lyft.net/console/projects/avmapworkflows/domains/development/executions/f7819c694e44443a7960
+https://flyte.lyft.net/console/projects/avmapworkflows/domains/development/executions/f096110e890ad4ae78e1
+https://flyte.lyft.net/console/projects/avmapworkflows/domains/development/executions/fd2af55462e3e4fdcb1e
+
+
+"
+Major,Task,Open,MB-1852,982450,,some feature requests from L5 Trajectories team,agale,hzhu,10-02-2019 3:29 AM,MB-1525,"[P1] get resource metrics ( CPU, memory usage for executions )
+Why: for now we have no idea whether we set correct CPU/Mem requests, would help a lot estimating the cost and potentially saving costs. As we soon want to have 500-800 executions per day, we'd like to optimise the resources before scaling up.
+
+[P2] flyte admin - filter by tags
+Why: for now when we use monitoring tool ( which calls the Flyte api ), we set a large ‘limit’ ( e.g. 1000 ) and filter the tags from the large list. But it seems having a limit ( ~ 3000, may because of the char limits from the json response) It would be great if it can directly filter the tag in API.
+
+[P2] dynamic task for launch plan
+Why: will be useful for tracking the launch plan executions from the ‘master task’. But for now we have a work around on this ( created `get-report` and `get-states` tasks after batch execution e.g. https://flyte.lyft.net/console/projects/trajectories/domains/development/executions/wrove63jtd ) so it’s not urgent.
+
+[P3] send customised email from Flyte
+Why: helpful for some daily report.
+"
+Major,Task,Open,MB-1851,982268,,Implement Staged and/or Canary Multi-Cluster Deployment Flow,akhurana,matthewsmith,10-01-2019 6:28 PM,MB-1525,
+Major,Bug,Open,MB-1849,982250,,Investigate and fix Aurora failover access patterns in Admin,aswaminathan,ytong,10-01-2019 5:58 PM,MB-1525,"During a recent outage, the aurora rds database fell over and had to be restarted.
+
+It seems that during this time, a lot of the events from Propeller failed to send with the message ""failed database operation with cannot set transaction read-write mode during recovery"".  This is what happens when you try to write to a postgres read replica.
+
+Logs:
+https://kibana.lyft.net/goto/fd651558a8afb1cfe54e87b6bd9b49cc
+
+Example user workflows that failed
+https://flyte.lyft.net/console/projects/etlwithflyte/domains/production/executions/apmb0udmkg
+https://flyte.lyft.net/console/projects/etlwithflyte/domains/production/executions/xk394b2mh3
+
+We should understand why the failover took so long, and confirm that we're using the correct cnames."
+Major,Task,Open,MB-1847,981974,,"Flyte 1.0 functional tests pass (due: 11/15, repo: modelbuilder api)",matthewsmith,agale,10-01-2019 3:48 PM,MB-1519,
+Major,Task,Open,MB-1846,981971,,"Sparksession integration tests pass (due: 11/15, repo: sparksession)",yxun,agale,10-01-2019 3:47 PM,MB-1519,
+Major,Task,Open,MB-1844,981963,,"Ride Locations workflows pass integration tests (due: 11/1, repo: ridelocations) ",etarrh,agale,10-01-2019 3:46 PM,MB-1519,
+Major,Task,Open,MB-1837,980347,,ReLaunch a WF with same parameters but a different version sha,rschott,rorendovici,10-01-2019 1:45 AM,MB-1525,"When re-launching a workflow, allow the option to relaunch with a different sha, but with same params. (then trigger it, and let it fail if params changed between revisions), but it would make debugging and development much faster. I can edit code changes locally, go to the last WF failure, and just relaunch with my new sha version (helps when the inputs can be a pain to re-enter all of them), and see it if finishes the next time through"
+Major,Sub-task,Open,MB-1836,980059,951232,Admin should fail events if the parent is in failing state.,,habuelfutuh,09-30-2019 4:29 PM,,
+Major,Task,Open,MB-1832,977168,,Spark Operator: Resource Quotas Enforcement,akhurana,akhurana,09-27-2019 2:20 PM,MB-1838,
+Major,Task,Open,MB-1829,977155,,Proofread Johnny's deployment doc. ,changhonghsu,changhonghsu,09-27-2019 2:13 PM,MB-1737,
+Major,Bug,Open,MB-1825,976941,,Recreate AWS Batch Clusters using Cloud-Init Scripts,habuelfutuh,habuelfutuh,09-27-2019 12:40 PM,MB-1525,
+Minor,Bug,Open,MB-1824,975663,,Transient s3 Issue resulted in an improperly labeled user error,matthewsmith,matthewsmith,09-26-2019 2:54 PM,MB-1525,"Additionally, we might consider making system errors retryable by default.
+
+ 
+
+[https://lyft.slack.com/archives/C5H3A2665/p1569516183498500
+]"
+Major,Bug,Open,MB-1823,975660,,UI Doesn't Preserve Multiline Input Strings (nor Render Strings with Newlines),rschott,matthewsmith,09-26-2019 2:53 PM,MB-1838,
+Major,Bug,Open,MB-1820,974075,,Bubble Out of Memory or Container Exit Error Codes from Batch Jobs,habuelfutuh,matthewsmith,09-25-2019 3:43 PM,MB-1525,"A couple people have had trouble getting visibility into why their sub-task failed. We have another task open for the batch job link–which will help alot. But we should probably render the error via our error.pb as well.
+
+ 
+
+Example:
+
+https://lyft.slack.com/archives/C5H3A2665/p1569449025467900"
+Critical,Task,Open,MB-1819,973876,,Add wf-id and node-id to k8s labels,ssingh,ssingh,09-25-2019 2:15 PM,MB-1525,"this would help us aggregate events for wf/tasks.
+
+ 
+
+example: [https://prometheus.ingress.flytestaging.us-east-1.k8s.lyft.net/graph?g0.range_input=1h&g0.expr=kube_pod_container_resource_requests_memory_bytes%20*%20on(namespace%2C%20pod)%20group_left(label_execution_id)%20kube_pod_labels%20%7Blabel_execution_id%20!%3D%22%22%7D&g0.tab=1]"
+Major,Bug,Open,MB-1811,969053,,Alarms for Unexpected Failures to Data Catalog,achan,matthewsmith,09-23-2019 10:46 AM,MB-1525,"We should alarm if we regularly receive unexpected errors when trying to communicate with the cache.  For instance, we started receiving 302s at some point, but since retrieving cached artifacts are considered a soft failure, we don't recognize that as a degraded state."
+Major,Task,Open,MB-1809,969009,,Alarms for Stats Flatline in Data Catalog,achan,matthewsmith,09-23-2019 10:36 AM,MB-1838,We had a bug roll out in DJO which appears to cause all calls to DataCatalog to fail. Having a flatline alarm could have helped alert us to this early.
+Major,Task,Open,MB-1808,967630,,Flyte Propeller multi-tenancy queue for isolation,,ssingh,09-20-2019 3:56 PM,MB-1525,
+Major,Sub-task,Open,MB-1807,967626,957065,Define FPU to capture cost across different resources,akhurana,ssingh,09-20-2019 3:55 PM,,
+Major,Task,Open,MB-1806,967623,,Push usage cost for flyte workflow nodes/tasks,habuelfutuh,ssingh,09-20-2019 3:54 PM,MB-1838,
+Major,Task,Open,MB-1804,967519,,Allow pre-populating launch parameters with parameters from a previous job,,kstaley,09-20-2019 3:29 PM,MB-1563,"I'd like to be able to re-launch a previous job but tweak the parameters. It'd be awesome if there were a button on the workflow execution page (similar to ""Relaunch Execution"") that takes you to the launch workflow page with all the parameters filled in the same way."
+Major,Sub-task,Open,MB-1802,967374,931972,Run refactorator,ytong,ytong,09-20-2019 2:25 PM,,
+Major,Task,Open,MB-1799,967369,,Basic OAuth implementation for Flyte Admin,ytong,ytong,09-20-2019 2:23 PM,MB-1848,
+Major,Task,Open,MB-1797,967356,,Sync with Compute About Flyte Image Repository/Publish Information About Staged Builds,matthewsmith,gsnelling,09-20-2019 2:17 PM,MB-1525,
+Major,Bug,Open,MB-1796,967354,,Add log fields to service manifest to get kibana static indexing,habuelfutuh,habuelfutuh,09-20-2019 2:17 PM,MB-1525,"We need to do this for propeller and flyte admin
+
+https://github.com/lyft/observability-docs/blob/master/docs/logging_fields.md#logging-fields"
+Major,Bug,Open,MB-1792,966200,,Propeller Doesn't Report OOM Killed,,matthewsmith,09-19-2019 4:55 PM,MB-1525,https://lyft.slack.com/archives/C5H3A2665/p1568936444284400
+Minor,Bug,Open,MB-1791,965727,,Flyte2 IU changes the parameters order,rschott,rcruz,09-19-2019 1:41 PM,MB-1838,"https://files.slack.com/files-pri/TFWNFHAPQ-FNJ74LF0U/image.png
+
+https://files.slack.com/files-pri/TFWNFHAPQ-FN5TFRMTL/image.png
+"
+Major,Bug,Open,MB-1790,963138,,False Positive System Error When Writing Empty Dataframe to Schema,,matthewsmith,09-18-2019 3:43 PM,MB-1563,https://lyft.slack.com/archives/C5H3A2665/p1568846152183000
+Minor,Task,Open,MB-1788,962236,,Where to find the tasks defined by version without execution? Where to find all versions for a workflow sorted by registered date?,rschott,hzhu,09-18-2019 10:41 AM,MB-1563,"In Flyte UI
+
+Given a version of workflow, how do we find the definitions for all the tasks?
+
+Given a workflow, how can we get the latest version ( sort by time )?"
+Major,Task,Open,MB-1786,959508,,Timezone on Schedules in UI,rschott,matthewsmith,09-16-2019 4:05 PM,MB-1525,
+Major,Sub-task,Open,MB-1783,957090,957087,Signalfx/Metrics ,habuelfutuh,akhurana,09-13-2019 2:36 PM,,
+Major,Story,Open,MB-1781,957087,,Flyte K8s Cluster/Infra Tasks,akhurana,akhurana,09-13-2019 2:36 PM,MB-1838,Infra level tasks on Flyte end.
+Major,Task,Open,MB-1780,957086,,Try out k8s batch schedulers ,ssingh,ssingh,09-13-2019 2:35 PM,MB-1525,
+Major,Story,Open,MB-1778,957065,,Features related to scalability and reliability of flyte workloads,,ssingh,09-13-2019 2:24 PM,MB-1525,"We need to do a bunch of things as we support more customers.
+ * Multiple cluster support
+ * Better utilization of machine resources
+ * Resource management."
+Major,Task,Open,MB-1775,956992,,Implement Lineage for DataCatalog,achan,achan,09-13-2019 2:01 PM,MB-1563,
+Major,Task,Open,MB-1774,956991,,Implement Labels for DataCatalog,achan,achan,09-13-2019 2:01 PM,MB-1524,
+Major,Task,Open,MB-1773,956989,,Figure out s3 Bucket Retention Policy for Data Catalog,achan,matthewsmith,09-13-2019 2:00 PM,MB-1524,
+Major,Task,Open,MB-1770,956800,,Spec with MLP. for Spark DevX,matthewsmith,matthewsmith,09-13-2019 12:13 PM,MB-1737,
+Critical,Task,Open,MB-1769,956782,,Sub-Workflow in FlyteKit,matthewsmith,matthewsmith,09-13-2019 12:04 PM,MB-1838,
+Major,Task,Open,MB-1768,956761,,Travis CI for Flytekit,matthewsmith,matthewsmith,09-13-2019 11:52 AM,MB-1525,
+Major,Task,Open,MB-1767,956675,,Write competitive comparison doc,kumare,gsnelling,09-13-2019 11:25 AM,MB-1737,
+Major,Bug,Open,MB-1765,951814,,Flyte SDK: WF connections are broken,matthewsmith,ssingh,09-10-2019 3:13 PM,MB-1525,"In this particular example, we have explicit input dependency but we still fail to deduce the node relationship:
+
+ 
+
+[https://github.com/lyft/detargeting/blob/ef12f2e5318550480715066ddecaabbe13b58c29/app/workflows/region_balance_classification.py#L294] 
+
+ 
+
+https://lyft.slack.com/archives/C5H3A2665/p1568070282346900"
+Major,Task,Open,MB-1759,946831,,Support for Launchplan in dynamic nodes,,ssingh,09-06-2019 10:03 AM,MB-1525,
+Major,Task,Open,MB-1756,945246,,[flyte plugins] Dump pod spec in debug logs in container plugin ,ssingh,ssingh,09-05-2019 9:36 AM,MB-1838,It would come handy in reproducing a task failure.
+Major,Bug,Open,MB-1755,944751,,New Launch UI doesn't show the missing inputs,rschott,habuelfutuh,09-04-2019 4:26 PM,MB-1838,"I just tried to kick off this WF: https://flyte.lyft.net/console/projects/priceoptimizeroffline/domains/development/workflows/CompositionWorkflow
+without filling in any of the fields. That resulted in a 400 as expected but the UI only showed the STatus code not the underlying error message (which field is missing)"
+Major,Bug,Open,MB-1754,944230,,Terminate button doesn't work,rschott,ytong,09-04-2019 1:13 PM,MB-1838,"https://flyte.lyft.net/console/projects/trajectories/domains/development/executions/f2fca7952d16b4910a22
+
+I believe Ketan looked into this issue a bit - the issue may be that the fly CRD has disappeared from the cluster, so Admin can't successfully terminate anything.
+
+We should maybe handle this case a bit better, figure out why the flyte workflow CRD instance disappeared, and definitely improve error messaging in the UI."
+Major,Task,Open,MB-1753,944218,,Handle Empty-Interface and Empty/Non-Existant Outputs.pb Correctly,achan,ytong,09-04-2019 1:07 PM,MB-1838,"As an interim solution for container tasks that do not have output, let's make a nearly empty outputs.pb file that they can upload in place of real outputs as a placeholder for the caching service to work off of.
+
+"
+Major,Task,Open,MB-1749,942351,,Publish Applied Defaults/Morphed Metadata,,pgala,09-03-2019 1:02 PM,MB-1563,"(Matt S. raising on behalf of Parth)
+
+For tasks that aren't registered with specific resource requirements, the platform applies defaults at runtime.  What these defaults are isn't surfaced to the user which creates a UX problem when debugging.  Additionally, as we move forward into overrides and other more complex dynamic behaviors, this problem can compound so we might want to think about adding additional fields to the task execution events."
+Blocker,Task,Open,MB-1728,934742,,edit flyte/rsts/getting_started,jburns,gsnelling,08-27-2019 10:53 AM,MB-1737,
+Blocker,Task,Open,MB-1727,934700,,write flyte/rsts/introduction/whatis,kumare,gsnelling,08-27-2019 10:44 AM,MB-1737,
+Major,Task,Open,MB-1726,932049,,Consider Pod Loss on Instance Termination a Recoverable Failure,akhurana,matthewsmith,08-23-2019 4:51 PM,MB-1838,
+Major,Task,Open,MB-1725,931991,,Introduce Deploy Process to Reduce Outages,,matthewsmith,08-23-2019 4:05 PM,MB-1525,
+Major,Task,Open,MB-1724,931985,,Introduce dev/staging k8s cluster,,matthewsmith,08-23-2019 4:02 PM,MB-1525,"It's very difficult for us to validate significant changes in the execution plane.  This proposes to introduce a k8s cluster for user development/staging executions to serve as an additional bake step.  This will help reduce true sevs (scheduled workflows failed, workflows deployed to production fail), and let us get some better validation from user usage."
+Critical,Task,Open,MB-1723,931972,,Refactor Qubole Plugin to New Interface,ytong,matthewsmith,08-23-2019 3:55 PM,MB-1838,
+Major,Task,Open,MB-1719,931944,,Update UI for Improved Behavior Around Active Launch Plans,matthewsmith,matthewsmith,08-23-2019 3:34 PM,MB-1838,
+Major,Task,Open,MB-1709,930000,,UI for aborted workflows is confusing,rschott,matthewsmith,08-22-2019 2:23 PM,MB-1838,
+Major,Task,Open,MB-1705,924337,,Make the slack/email notifications more useful,,kmudgal,08-19-2019 11:47 AM,MB-1563,"The current slack/email notification offer no help in identifying which workflow succeeded or failed and it would be helpful if the messages would include more metadata about the workflows
+
+Useful data:
+ * Workflow name
+ * Workflow version
+ * Inputs
+ * Outputs
+ * Workflow execution Id
+ * Timestamps for the workflows/tasks
+ * List of tasks succeeded/failed
+
+This is all important to us because we have a lot of people who are interested in getting notified about the workflows but do not have access to the UI (eg. The labelling/curation team). The current notifications are also useless when viewed on your phone since you need to have VPN setup to access the links."
+Critical,Task,Open,MB-1702,922360,,Handle init container failures in Propeller,ssingh,ssingh,08-16-2019 10:27 AM,MB-1525,
+Major,Task,Open,MB-1699,921510,,Override support for custom plugins config at Runtime,,akhurana,08-15-2019 2:11 PM,MB-1563,Extend the current override support to let users override Custom Plugins config(like Spark config etc.) at workflow launch time.
+Major,Bug,Open,MB-1698,921493,,flyte.lyft.net shows a not found page,agale,mpayton,08-15-2019 2:05 PM,MB-1525,"https://flyte.lyft.net/ gives me a ""Not Found"" result
+https://flyte.lyft.net/console is the actual page
+
+This is confusing as someone not used to Flyte. Could the home page redirect to the console automatically?"
+Major,Bug,Open,MB-1697,921350,,Failed Flyte2 workflows have incorrect node statuses,,pgala,08-15-2019 1:19 PM,MB-1525,"When a workflow fails, the system is frozen and no statuses are updated. Thus sub workflows/tasks which are running remain in running status even though they might have succeeded/failed.
+
+From customer point of view, I think this is a bug. Irrespective of the design, if the node status is not updated, it defeats the purpose of the node status which might be frozen in time and eventually be incorrect. This also affects further debug-ability like figuring out which subworkflows succeeded and failed. Basically, if the workflow fails, we cannot effectively rely on any node status which are most important in the first place when the workflow fails
+
+For more context see https://lyft.slack.com/archives/C5H3A2665/p1565899678479700?thread_ts=1565890619.463500&cid=C5H3A2665"
+Critical,Task,Open,MB-1696,921158,,Hive retries not working or UI not showing them,habuelfutuh,pgala,08-15-2019 11:51 AM,MB-1838,"The hive task https://github.com/lyft/priceoptimizeroffline/blob/master/multimode/workflows/odtm_dvr_trip_cost_workflow.py#L39 is setup with 3 retries.
+
+However, as per this run https://flyte.lyft.net/console/projects/priceoptimizeroffline/domains/production/executions/f6bb8e11a1b4848b5af9, either retries did not happen or UI is not showing all of them"
+Minor,Task,Open,MB-1693,921135,,Improve user metrics,rschott,ytong,08-15-2019 11:37 AM,MB-1525,"Users need to be able to better understand how their tasks are doing.  We have a lot of metrics already but we need to document and expose them better.
+
+Currently only execution time is displayed on the UI for instance, no other metrics.  Things that would be helpful to see are duration, cpu and memory utilization.
+
+At the very least we need to document how users can ascertain these for themselves.
+"
+Minor,Task,Open,MB-1691,921123,,[Authz] Prevent individuals from registering to production domain,rschott,ytong,08-15-2019 11:33 AM,MB-1525,"Kunal recommended that we install a way to prevent people from registering to the production domain, as this introduces a lot of clutter as people iterate.
+
+This can be potentially done as part of our work on authorization."
+Minor,Task,Open,MB-1690,921104,,Techniques and tooling around iterating failed tasks in a workflow,agale,ytong,08-15-2019 11:28 AM,MB-1563,"If a DAG has a bunch of tasks, and in one execution, one of the tasks failed, how do you debug the failed task?  After you've pushed a fix, can you continue the workflow from that point?
+
+This will probably be multiple tickets once we figure out how to even support this?"
+Critical,Task,Open,MB-1685,913166,,Separate stats that provide workflow failures due to user code vs flyte platform,habuelfutuh,pgala,08-09-2019 12:32 PM,MB-1838,"As we move to flyte2 and also for flyte2 to measure and maintain its SLO, it is important for both flyte team and flyte clients to know which workflows failed due to user code (raising exception) vs flyte platform issue. This will enable flyte customers to also monitor their workflow success rate as well as for flyte to monitor its SLO. From flyte point of view, a failed workflow may be the ones which fail due to flyte platform and not due to user code. This is feature request to provide separate stats for both on flyte 2"
+Major,Task,Open,MB-1684,912382,,"Announce system-wide changes, and update status page for slowdowns / outages",agale,kmudgal,08-08-2019 7:00 PM,MB-1525,"Most of the av-mapping workflows deal with mapping artifacts which are quite large in size and most of the binaries load those artifacts to process them in the workflows. The mapping workflows were working correctly until the last few days when suddenly all the workflows that we were running started failing. 
+
+ 
+
+Turns out the issue was in the reduction of the default memory for the pods. I request the Flyte team to make an announcement moving forward to ensure all its customers get a chance to update the workflows and ensure there are no failures."
+Major,Task,Open,MB-1683,911412,,UI - execution status and error messages,rschott,ytong,08-08-2019 11:07 AM,MB-1525,"If an execution fails, I have to go back to the workflow page in order to see the error.  I'd like to be able to see the error on the actual execution page as well.  I feel like I have to go back currently, make sure i'm looking at the right execution (cuz there are sometimes a lot of executions), and then hop back and forth."
+Minor,Task,Open,MB-1681,911392,,UI - different colors for queued and running,rschott,ytong,08-08-2019 11:00 AM,MB-1525,"Queued and Running are of the same colour on the graph, which means that I have to click on the node every time to see if its actually running or just queued for resources. Different colour for queued and running would be a nice have and wouldn't degrade the existing experience."
+Major,Task,Open,MB-1679,911380,,Project view needs a list of recent executions,,ytong,08-08-2019 10:56 AM,MB-1525,"UI - this is very helpful for those on the Flyte team, and other administrators.  Probably something you don't appreciate until you go on-call.
+
+I've often found myself on a project view, clicking through each and every workflow (and for the teams that use dynamically generated UUID workflow names this is really painful), to look for a recent execution.  I then give up, and just use the command line instead."
+Minor,Task,Open,MB-1678,911374,,"json for launch plans, and workflows",rschott,ytong,08-08-2019 10:54 AM,MB-1525,The UI should display the spec for launch plans and workflows in addition to tasks.
+Major,Task,Open,MB-1677,911344,,Create public-facing distro list to use as email address for Flyte packages,,rschott,08-08-2019 10:43 AM,MB-1525,"It's common for package registries to have an author/email associated with a package, and these email addresses are usually public.
+
+ 
+
+For FlyteIDL, Randy is listed as the author on NPM. This would present a problem if Randy were to leave the company and suddenly the email address is going to the void :)
+
+We should create a publicly-visible distribution list that can be used as a package author contact for things like pypi/npm.
+
+ "
+Major,Task,Open,MB-1672,906906,,Flyte Scheduled jobs should support serial execution,,kumare,08-05-2019 2:58 PM,MB-1563,"There are many jobs, that prefer a max concurrency of 1 job to be executing at once. Especially if they are scheduled to run every few minutes and the previous one takes longer.
+
+Ideally we should obey the schedule time and execute only one workflow at a time."
+Major,Task,Open,MB-1670,903425,,Figure Out Task Portability Story (AWS <-> GCP) for Blob/Schema Writes,,matthewsmith,08-01-2019 3:08 PM,MB-1563,
+Major,Task,Open,MB-1665,901106,,Round 1 of removing FlyteKit internal references,,jburns,07-31-2019 11:05 AM,MB-1525,"""service_venv"" referenced in:
+
+scripts/flytekit_build.sh
+tests/flytekit/common/configs/production.config
+tests/flytekit/common/configs/local.config
+tests/flytekit/common/configs/deprecated_local.config
+tests/flytekit/common/configs/staging.config
+
+
+""modelbuilder"" referenced in:
+
+Makefile
+flytekit/sdk/tasks.py
+setup.cfg:exclude
+tests/flytekit/unit/common_tests/test_launch_plan.py
+tests/flytekit/unit/engines/flyte/test_engine.py
+tests/flytekit/common/configs/production.config
+tests/flytekit/common/configs/local.config
+tests/flytekit/common/configs/deprecated_local.config
+tests/flytekit/common/configs/staging.config
+
+
+""lyft.net"" referenced in:
+tests/flytekit/common/configs/production.config
+tests/flytekit/common/configs/staging.config
+
+remove iam references in:
+tests/flytekit/unit/common_tests/test_launch_plan.py
+tests/flytekit/unit/engines/flyte/test_engine.py
+tests/flytekit/unit/engines/flyte/test_engine.py
+
+
+remove the ""_supports_ssl"" function in:
+
+flytekit/clients/raw.py"
+Minor,Bug,Open,MB-1664,900381,,Some error messages are not revealing/informative,rschott,changhonghsu,07-30-2019 5:25 PM,MB-1563,"Some error messages are not informative and have to dig deep into k8s yamls to figure out.
+
+[https://flyte.lyft.net/console/projects/avmapworkflows/domains/development/executions/f9eddd89d5fd446d2af2]
+
+In this execution, we can only see `task failed, CreateContainerError: CreateContainerError`, which does not reveal the root cause.
+
+Had to use `kubectl get pod -navmapworkflows-development f9eddd89d5fd446d2af2-run-slam-metrics-0 -o yaml` to see the actual error message
+{code:java}
+  - image: library.iad.aws.core.av.lyft.net:5301/tool/slam_metrics:0.1.80108
+    imageID: """"
+    lastState: {}
+    name: f9eddd89d5fd446d2af2-run-slam-metrics-0
+    ready: false
+    restartCount: 0
+    state:
+      waiting:
+        message: |
+          container create failed: container_linux.go:345: starting container process caused ""exec: \""/bin/bash\"": stat /bin/bash: no such file or directory""
+        reason: CreateContainerError
+{code}"
+Major,Task,Open,MB-1663,899260,,Link to cached execution,achan,ytong,07-30-2019 10:58 AM,MB-1525,"When a task is skipped because the results are discovered, add a link to the execution responsible for creating that data catalog entry."
+Major,Task,Open,MB-1662,899256,,Ignore datacatalog execution style,achan,ytong,07-30-2019 10:55 AM,MB-1525,Create a way to launch an execution of a workflow that ignores caching for all tasks (and all tasks in child workflows).
+Major,Task,Open,MB-1660,898587,,AVML to cross register everything,ytong,ytong,07-29-2019 7:40 PM,MB-1838,Try to work with Ricky and Alex to cross register everything to both zimride and POC.
+Major,Task,Open,MB-1656,898580,,Review onboarding docs,ytong,ytong,07-29-2019 7:25 PM,MB-1838,Review L5 POC onboarding docs to make sure we agree with them.
+Minor,Task,Open,MB-1655,896016,,Replace loading indicators,rschott,rschott,07-29-2019 2:08 PM,MB-1838,"We want to make some updates to the way we load items:
+ * Show no loading indicator if the request returns within 1 second
+ * After 1 second, show a shimmer/skeleton state"
+Minor,Task,Open,MB-1654,896010,,Update visuals used for errors,rschott,rschott,07-29-2019 2:07 PM,MB-1838,
+Minor,Task,Open,MB-1653,896007,,Cleanup / enhancements of expanding node executions,rschott,rschott,07-29-2019 2:06 PM,MB-1525,"* Limit nested children of Dynamic Tasks to 10 items, with a link to view the rest on a separate details page
+ * Show the count of succeeded/failed/running tasks when expanding a sub-workflow
+ * Render log links for task execution items
+ * Potentially rename Sub-Workflow and/or make a distinction between a child workflow launched by a LaunchPlan and one launched as a nested workflow.
+ * Fix sizing of loading indicator and/or replace it with a placeholder
+ * Potentially fix the visual used when displaying an error while loading"
+Major,Task,Open,MB-1652,893606,,Read logs from init containers if they exist,,habuelfutuh,07-29-2019 11:03 AM,MB-1525,"Currently our flyte log plugin only reads container logs for the main containers not for init containers. And since we inject iamwait container, if that fails, we essentially get no logs."
+Critical,Task,Open,MB-1651,884782,,Dynamic Task fully discovers sub-tasks,ytong,matthewsmith,07-26-2019 4:02 PM,MB-1838,
+Critical,Task,Open,MB-1650,884780,,Dynamic Task yields events per sub-task with better parent information,ytong,matthewsmith,07-26-2019 4:02 PM,MB-1838,
+Critical,Task,Open,MB-1649,884747,,DataCatalog-private repo,jburns,matthewsmith,07-26-2019 3:45 PM,MB-1525,
+Critical,Task,Open,MB-1645,884170,,Create AWS and GCP specific overlays for easy launch,kumare,kumare,07-26-2019 10:56 AM,MB-1525,This is extremely important for successful OSS launch. This will also be used by our partners to quickly launch test stacks
+Critical,Task,Open,MB-1642,884148,,Plugins should have a standardized interface,habuelfutuh,kumare,07-26-2019 10:50 AM,MB-1525,"My recommendation
+ - Have a low level plugin interface (Tasks)
+ - Have a higher level FlyteK8s interface
+ - Have a higher level Services interface
+
+All these interfaces may exist with FlyteIDL or some other place.
+The implementation of the machinery that controls them could probably exist with FlytePropeller. The implementations of the plugins could be supplied from various different repositories"
+Critical,Task,Open,MB-1641,884142,,"Logging plugins should not be in FlyteIDL, but in the common plugins interface layer",kumare,kumare,07-26-2019 10:47 AM,MB-1525,"Logging plugins for Flyte exist in FlyteIDL, they do not belong there. They belong in the common plugins place."
+Critical,Task,Open,MB-1640,884139,,FlytePropeller should be refactored to separate out the controller and the core,kumare,kumare,07-26-2019 10:46 AM,MB-1525,"- The core should only use Interfaces.
+- The controller should be separate, this will help in updates and migrations
+- This will also help in alternate implementations like SFN etc"
+Critical,Task,Open,MB-1638,884008,,Upstream kubernetes changes for proto serialization,krogan,krogan,07-26-2019 9:56 AM,MB-1525,This is required for open source
+Major,Task,Open,MB-1636,883421,,pyflyte warns of name collisions when attempting to register entities,,matthewsmith,07-25-2019 2:59 PM,MB-1563,A common problem for Pisco is that they have name collisions which aren't reconcilable because the error message isn't helpful. pyflyte could check for this in advance to help clear up such issues.
+Major,Task,Open,MB-1635,883273,,Map Type Implementation,,matthewsmith,07-25-2019 1:57 PM,MB-1525,
+Critical,Task,Open,MB-1631,882816,,[DEMO NICE-TO-HAVE] Add indication that an execution is cached,rschott,achan,07-25-2019 10:54 AM,MB-1838,Currently the UI does not show that a task execution is memoized. It is just absent from execution details if the execution was skipped because of cache.
+Critical,Task,Open,MB-1630,882689,,remove lyft.net/gpu references in flyteplugins,jburns,jburns,07-25-2019 10:20 AM,MB-1525,"""lyft.net/gpu"" is used in the flyteplugins tests several places. Maybe getting rid of this is a simple as changing the string to something like ""flyte.net/gpu""?
+
+
+ go/tasks/v1/k8splugins/sidecar_test.go
+ go/tasks/v1/config_load_test.go
+
+go/tasks/v1/testdata/config.yaml
+
+go/tasks/v1/flytek8s/pod_helper_test.go
+
+go/tasks/v1/flytek8s/k8s_resource_adds_test.go"
+Critical,Task,Open,MB-1628,881893,,remove references to flyte.lyft.net in flyteplugins,jburns,jburns,07-24-2019 3:29 PM,MB-1525,"[https://github.com/lyft/flyteplugins/blob/master/go/tasks/v1/flytek8s/constants.go]
+
+We can probably just gut it. Per ketan, we're not using the finalizers right now :)"
+Major,Task,Open,MB-1627,881888,,Define Communication Protocol for Open-Source,agale,matthewsmith,07-24-2019 3:26 PM,MB-1525,"Ideas:
+ # Define Open-Source on-call
+ ## Check JIRA/GitHub Issues, triages
+ ## Responsible for answering questions.
+ ### Perhaps all answers must at least be vetted by the oncall?
+ # Slack channel?
+ # Mandatory training before going on open-source on call?"
+Critical,Task,Open,MB-1626,881182,,Gut Qubole Operator,jburns,jburns,07-24-2019 11:32 AM,MB-1525,Qubole Operator is not going open-source. We need to rip it out of flyteplugins in order to open-source flyteplugins.
+Major,Task,Open,MB-1624,879762,,Enable a KickoffTime() like Input that doesn't require a schedule,matthewsmith,chopkins,07-23-2019 2:16 PM,MB-1838,"I'd like to be able to have the time a workflow was started as an input to the workflow. I know this works with scheduled workflows, but the use case here is a workflow that isn't scheduled but kicked off ad-hoc.  Think of this timestamp as an audit/coordination timestamp.
+
+We attempted to accomplish this using:
+k = Input(Types.Datetime, default=datetime.datetime.now())
+task1(
+ t = k
+)
+task2(
+  t=k
+).
+
+Replacing k with datetime.datetime.now() would cause the two tasks to have out of sync times. And leveraging KickoffTime doesn't work.  Instead we now have to add a seprate datetime seeing task: https://github.com/lyft/etamodels/pull/1620
+task1 >> task2"
+Critical,Task,Open,MB-1620,879204,,L5 Feature request: Allow namespaces only per domain (skip namespaces),mtoledo,kumare,07-23-2019 11:08 AM,MB-1563,"It can happen in some cases like at L5, that they cannot allow creating one namespace per project. They understand the consequences of not doing so. But, this is a limitation in their infrastructure.
+
+Doc: https://docs.google.com/document/d/1hS7vAM8dGzujnWODheLW3-2x1T4ZqZ9UWKfFcIoywXQ/edit
+
+"
+Critical,Task,Open,MB-1619,879203,,Update flytebase to send stats correctly in Flyte 2.0,ssingh,matthewsmith,07-23-2019 11:08 AM,MB-1838,
+Major,Task,Open,MB-1617,879063,,Limit GCP access for project flyte-sandbox,kumare,kumare,07-23-2019 10:26 AM,MB-1525,"Once we have figured out all the permissions required to run Flyte on GCP, let us limit the access to minimum required set for this project.
+
+The permissions were provisioned using https://jira.lyft.net/browse/SECHELP-7782"
+Major,Task,Open,MB-1615,877841,,Add long-lived debugging information to events OR improve logging from propeller,ssingh,matthewsmith,07-22-2019 1:49 PM,MB-1838,We currently have a problem when debugging issues related to lost logs. It would be great if information like executing node was persisted so we could go back afterwards and do some amount of post-mortem.
+Major,Task,Open,MB-1614,877150,,Request for customizable notification messages in ETL job failures (for runbook links),,streadwell,07-22-2019 10:38 AM,MB-1563,"I would like support for customizable notification messages, so that I can attach runbook links to my PagerDuty alerts when an ETL job fails. This would help make it easier for our team members handling oncall. Full slack thread: https://lyft.slack.com/archives/C5H3A2665/p1563816580009300
+"
+Minor,Task,Open,MB-1606,875026,,"Execution IDs aren't copy-pastable across UI, CLI",rschott,agale,07-18-2019 1:55 PM,MB-1563,"The full execution idea ID ex:project:domain:id
+
+ 
+
+In the UI we only show the last portion (""id"")
+
+The CLI requires the full ""ex:project:domain:id"", meaning you can easily copy-paste between the two. 
+
+ 
+
+Request from pricing. "
+Major,Task,Open,MB-1605,875022,,Ability to have dynamic memory hints w/ retries ,,agale,07-18-2019 1:54 PM,MB-1563,Request from pricing
+Major,Task,Open,MB-1603,873530,,Ability to invoke python services from Flyte workflows,,ddwarapudi,07-17-2019 1:18 PM,MB-1563,"Some of the workflows in the Driver Engagement side (which are used to generate incentives for drivers) would like to get a list of eligible users from a python service (i.e Audience), instead of Hive. But because of the limitation on Flyte not being able to invoke services, we would have to workaround this problem.
+It would be great if we are able to invoke services (via REST/grpc) from Flyte workflows."
+Minor,Task,Open,MB-1601,870001,,Unclear error in UI when using a wrong argument in {{}} template,habuelfutuh,vbarinov,07-15-2019 11:40 AM,MB-1525,"Hey, I was defining a container task in my workflow like this:
+```
+Container(
+        image=CC_TASK_CONTAINER,
+        command=[""/usr/local/bin/entrypoint""],
+        args=[
+            ""/app/src/backend/workflow_engine/hello_world_tasks/wfe_hello_world_task_cc"",
+            ""--username"", ""{{.inputs.username}}"",
+        ],
+        resources=Resources(requests=[], limits=[]),
+        env={
+            ""NELSON_DATACENTER"": ""pdx"",
+            ""NELSON_DNS_ROOT"": ""aws.av.lyft.net"",
+            ""KUBERNETES_CLUSTER_NAME"": ""flyte"",
+        },
+        config={},
+    ),
+```
+
+If I put an incorrect argument name in {{}} template in `args` field it shows me an error in UI that looks like an issue with Flyte Cluster:
+```
+Workflow[avexampleworkflows:development:workflows.wfe_pilot.Workflow] failed. RuntimeExecutionError: max number of system retry attempts [51/50] exhausted., caused by: <nil>
+```
+
+It would be nice to see an error message related to a wrong argument name.
+"
+Critical,Task,Open,MB-1596,865320,,Delete or make Flyte Examples better,matthewsmith,agale,07-11-2019 2:22 PM,MB-1525,
+Critical,Task,Open,MB-1594,864561,,[GDPR] Periodic Audit for flyte metadata,habuelfutuh,habuelfutuh,07-11-2019 11:23 AM,MB-1524,"For GDPR/CCPA compliance, our lawyer contact asked for a periodic audit for metadata. This should sample WF/Node inputs/outputs, discovery entries and any other user-defined metadata to ensure we can catch violations early on."
+Minor,Task,Open,MB-1593,863290,,Move execution details below the header,rschott,rschott,07-10-2019 2:18 PM,MB-1838,[https://lyft.invisionapp.com/d/main#/projects/prototypes/17882862]
+Critical,Sub-task,Open,MB-1585,861644,861626,[Plugins] Move Array Task plugins to FlytePlugins repo,,habuelfutuh,07-09-2019 2:41 PM,,
+Critical,Sub-task,Open,MB-1584,861643,861626,[Console] Ensure task details page doesn't break if a task definition doesn't exist,,habuelfutuh,07-09-2019 2:41 PM,,
+Critical,Sub-task,Open,MB-1583,861642,861626,[Admin] Do not require task registration for task events,,habuelfutuh,07-09-2019 2:41 PM,,
+Critical,Sub-task,Open,MB-1582,861641,861626,[Propeller] Clean-up & Merge DJO PR ,habuelfutuh,habuelfutuh,07-09-2019 2:41 PM,,
+Critical,Sub-task,Open,MB-1581,861640,861626,"[FlyteKit] Fill in ""is_dynamic"" flag for all @dynamic_tasks",,habuelfutuh,07-09-2019 2:41 PM,,
+Critical,Sub-task,Open,MB-1580,861639,861626,"[FlyteIdl] Add a ""is_dynamic"" flag to Node proto message",habuelfutuh,habuelfutuh,07-09-2019 2:41 PM,,
+Minor,Bug,Open,MB-1576,860697,,Expanded error message collapses when scrolling out of view,rschott,rschott,07-09-2019 8:21 AM,MB-1525,"# Find an execution in the executions table (workflow details page) that has a long error message.
+ # Click to expand the error message.
+ # Scroll the row out of view
+ # Scroll the row back into view
+
+Expected: The error message should still be expanded.
+
+Actual: The error message renders collapsed, but the row is still the size that it would be with the error message expanded. Now the content sits in the middle of a row that is too tall."
+Major,Sub-task,Open,MB-1575,860523,833900,How Dynamism Works,,matthewsmith,07-08-2019 7:42 PM,,"From Yee: ""
+ * how dynamism works.  We should fill this in later but we should definitely walk admins/contributors through what is happening step by step.  It's highly confusing.  are subtasks registered?  are they not?  why?"""
+Major,Sub-task,Open,MB-1574,860522,833900,Cluster Resource Manager: How-To,,matthewsmith,07-08-2019 7:41 PM,,"From Yee: ""
+ * how to use the new cluster resource manager katrina is writing.  how to create new projects in general.
+ * how to create/manage domains"""
+Major,Sub-task,Open,MB-1573,860521,833900,Repository Descriptions,,matthewsmith,07-08-2019 7:41 PM,,"From Yee: ""In general, we have a lot of repos - flytestdlib, boilerplate, flyte, flyteidl, plugins, etc.  Should we have a listing of all these repos somewhere and what they do?  Note: So far, for large components like Flyte Admin and Propeller, I've been reluctant to add much to documentation in each of those repo.  Instead, I've been putting them into the Contributor's guide.  Eventually, I'm sure we'll have documentation in both the Contributor's guide for flyte admin and in the flyteadmin repo itself, but I don't know what the boundary is between one and the other.  My vote is to put as much as possible into contributor's guide for now."""
+Major,Sub-task,Open,MB-1572,860520,833900,Flyte Boilerplate Repo Documentation,,matthewsmith,07-08-2019 7:40 PM,,"From Yee: ""boilerplate repo - what is it, why does it exist"""
+Major,Sub-task,Open,MB-1571,860502,833900,Fix Metrics Timeline to Be Accurate,,matthewsmith,07-08-2019 6:24 PM,,"From Yee: ""Docs: Update the metrics timeline to be more accurate.  I'm sure it's inaccurate right now."""
+Major,Sub-task,Open,MB-1570,860501,833900,Improve Metrics Documentation for Flyte 2.0,,matthewsmith,07-08-2019 6:23 PM,,"From Yee: ""Docs: Need to add docs for metrics - our documentation is terrible.  Should probably also add more documentation/comments in code.""
+
+ 
+
+Also from Yee: ""User metrics from propeller, observability in general (both for administrator and user)."""
+Major,Sub-task,Open,MB-1569,860500,833900,Local Contributor Documentation,,matthewsmith,07-08-2019 6:23 PM,,"From Yee: ""Docs: Local contributor development documentation.  Basically, how do we on the team use a local version of Flyte to iterate the platform itself?  Weiwei and Viktor are interested in this, but Annie Zhou is as well, as a means for quicker iteration."""
+Major,Sub-task,Open,MB-1568,860499,833900,Unit Testing Documentation,,matthewsmith,07-08-2019 6:22 PM,,"From Yee: ""Docs: Flyte 2 docs are missing unit testing instructions.  Copy them over from Flyte 1 and modify slightly."""
+Major,Task,Open,MB-1567,860430,,Sub-Workflow in SDK,matthewsmith,matthewsmith,07-08-2019 5:33 PM,MB-1525,
+Critical,Task,Open,MB-1566,860429,,If-Else in SDK,matthewsmith,matthewsmith,07-08-2019 5:33 PM,MB-1525,
+Minor,Task,Open,MB-1560,859675,,Filter/view executions by SHA in Flyte 2.0 UI,rschott,agale,07-08-2019 1:14 PM,MB-1838,"Already in the cli: 
+
+flyte-cli -h flyte.lyft.net -p mapworkflows -d development list-executions -f ""eq(workflow.version,gitsha)""
+
+ 
+
+This is to track potential for this in the UI. 
+
+Customer notes: wanted by basemap and I believe a couple others but need to investigate.
+
+ 
+
+***NOTE***
+
+The UI can already filter executions by Version, but we don't show versions in the executions table. The work here is mostly for adding that.
+
+Will require a small amount of UX work to determine how to surface versions in the table rows.
+
+ 
+
+ "
+Minor,Task,Open,MB-1556,859302,,Jupyter notebook support,,agale,07-08-2019 11:08 AM,MB-1563," Notebook support for quick development and better local execution support
+
+ 
+
+Customer notes: PAX requested this, but presumably many others would want this."
+Minor,Task,Open,MB-1554,859265,,Sorting/filtering by inputs,rschott,agale,07-08-2019 11:00 AM,MB-1838,"Major ask from nearly all customers: pricing, basemap, eta, pax, etc
+
+PRD here: [https://docs.google.com/document/d/1dah6Lvup5uhVudM4FvVojZDgtgT_QQYd4to9PD4Ite8/edit]"
+Minor,Task,Open,MB-1553,859261,,Ability to delete/hide obsolete workflows from UI,rschott,agale,07-08-2019 10:59 AM,MB-1525,"Partner notes: pricing, basemap, mlp all really want this and presumably others."
+Major,Task,Open,MB-1549,857728,,Flytekit Workflow.Fetch(),matthewsmith,matthewsmith,07-03-2019 5:06 PM,MB-1525,
+Minor,Bug,Open,MB-1544,854405,,Task Error not bubbled up to nested NodeExecution,habuelfutuh,rschott,07-01-2019 1:36 PM,MB-1194,"This NodeExecution is a child of a dynamic task:
+[https://flyte.lyft.net/api/v1/node_executions/simulatorworkflows/development/f7b15b4dd87a545c3bde/pull-match-cycle-logs-b2300e1159-cycle-loge829db977601000a4a957a1f969a08cfaa8dab34-0-1]
+
+
+
+It has a single nested task execution, as seen from this request:
+
+[https://flyte.lyft.net/api/v1/task_executions/simulatorworkflows/development/f7b15b4dd87a545c3bde/pull-match-cycle-logs-b2300e1159-cycle-loge829db977601000a4a957a1f969a08cfaa8dab34-0-1?limit=10000]
+
+ 
+
+The nested task failed and has an error set in its closure. However, the error did not propagate up to the parent NodeExecution.
+
+This is inconsistent with what we do for non-nested NodeExecutions and breaks the UI experience where errors for NodeExecutions can be expanded inline in the ""Nodes"" table on the Execution Details page."
+Critical,Task,Open,MB-1542,854030,,Marketing splash page,agale,agale,07-01-2019 12:02 PM,MB-1867,"We'll need a marketing splash page e.g. ""flyte.com"" where the public can go to learn about flyte
+
+ 
+
+first step is to get design resources, documentation here: [https://docs.google.com/document/d/1f0KRZW_rWV1CVa2wQdJzOubsVVAUvBNd8qBb6JKeCFY/edit?ts=5d1a482c#]"
+Minor,Task,Open,MB-1534,837590,,"UI: if applicable, show the LP that created a given execution ",rschott,agale,06-17-2019 2:51 PM,MB-1838,"show what launch plan was used to create an execution in the individual executions page
+
+ 
+
+(for after MVP)"
+Major,Sub-task,Open,MB-1529,833933,833899,Get marketing to review blog post,agale,agale,06-13-2019 1:15 PM,,
+Critical,Story,Open,MB-1527,833899,,Initial blog post is ready,kumare,agale,06-13-2019 12:56 PM,MB-1525,
+Major,Story,Open,MB-1526,833897,,Spotify trial is completed,kumare,agale,06-13-2019 12:56 PM,MB-1525,
+Minor,Task,Open,MB-1490,781585,,UX MVP Cleanup,rschott,rschott,04-29-2019 11:28 AM,MB-1525,This is a placeholder to remove/clean up any unused/deprecated code left over after implementing the UX MVP.
+Major,Sub-task,Open,MB-1488,779334,531535,Error Codes,habuelfutuh,rschott,04-26-2019 9:43 AM,,"Error codes are designed to categorize common errors / classes of errors so that we can provide a useful short description of what went wrong, instead of forcing the user to parse through the call stack.
+
+So we need, at least, for the error codes that can be returned for executions to be documented: [https://github.com/lyft/flytepropeller/blob/954a80d500/pkg/controller/workflow/errors/codes.go]"
+Minor,Task,Open,MB-1481,763827,,Re-add JS generations for flyteidl plugins,rschott,krogan,04-12-2019 11:36 AM,MB-1525,"The docker-protobufjs container is meant to be used generically, with all needed code mounted into the container, and arguments passed to the container being forwarded to `protobufjs`. In order to support plugins, there are at least two solutions:
+ # We create a lyft-specific (or flyte-specific) version of `docker-protobufjs`, either by forking or copying (it's not a very complicated repo), and then add the necessary dependencies via the Dockerfile (this is how we are doing it for protocgenerator)
+ # We pull in `flyteproto` as a submodule, so that the code is mounted along with the rest of the repo when running `docker-protobufjs`. This would ideally require no modification to the docker container, and the dependency will be managed explicitly via the submodule version.
+
+Randy votes for option 2 :D"
+Critical,Task,Open,MB-1480,759304,,Flyte 2.0: Add support for mounting external drives in container tasks,,kmudgal,04-09-2019 10:53 AM,MB-1563,This is a new feature request to add support to container tasks to allow mounting external drives (like EFS). This is especially important for running long running tasks like we do in mapping.
+Major,Bug,Open,MB-1463,744309,,500 returned when querying outputs for a custom container,matthewsmith,rschott,03-26-2019 11:51 AM,MB-1525,"[http://flyte.lyft.net/api/v1/data/node_executions/trajectories/development/181cfda32e474315bc15/global-tracker-3]
+
+ 
+
+There is an expectation from Admin that _some_ type of output will exist in storage for a NodeExecution. This turns out not to be the case if a container is running without the SDK. We need some type of handling for this case."
+Major,Sub-task,Open,MB-1443,727898,727886,Spark UI,,akhurana,03-12-2019 1:11 PM,,Probably won't need anything special for Spark except Qubole Command links similar to Hive.
+Major,Sub-task,Open,MB-1442,727895,727886,Qubole Plugin Spark Impl,,akhurana,03-12-2019 1:10 PM,,
+Major,Sub-task,Open,MB-1441,727893,727886,SDK entrypoint/Parent container,,akhurana,03-12-2019 1:10 PM,,
+Major,Sub-task,Open,MB-1440,727891,727886,SDK flag: Whitelist Support,,akhurana,03-12-2019 1:10 PM,,
+Major,Sub-task,Open,MB-1439,727889,727886,IDL changes,,akhurana,03-12-2019 1:09 PM,,
+Critical,Sub-task,Open,MB-1431,718222,531535,API Reference: SDK,,agale,03-04-2019 3:29 PM,,
+Blocker,Sub-task,Open,MB-1430,718217,531535,API Reference: IDL ,,agale,03-04-2019 3:29 PM,,
+Major,Sub-task,Open,MB-1429,718201,531535,Operations & Administration: Scaling ,,agale,03-04-2019 3:28 PM,,
+Major,Sub-task,Open,MB-1428,718200,531535,Operations & Administration: Runbook ,,agale,03-04-2019 3:27 PM,,
+Major,Sub-task,Open,MB-1427,718195,531535,Extending Flyte: Extending the SDK/programming model,,agale,03-04-2019 3:27 PM,,
+Major,Sub-task,Open,MB-1426,718193,531535,Extending Flyte: Creating a new task type,,agale,03-04-2019 3:26 PM,,
+Major,Sub-task,Open,MB-1425,718192,531535,Extending Flyte: Composing workflows without the SDK,,agale,03-04-2019 3:26 PM,,
+Critical,Sub-task,Open,MB-1424,718189,531535,Flyte Task Types: Flink,aswaminathan,agale,03-04-2019 3:25 PM,,
+Critical,Sub-task,Open,MB-1422,718186,531535,Flyte Task Types: Hive,ytong,agale,03-04-2019 3:25 PM,,
+Critical,Sub-task,Open,MB-1421,718185,531535,Flyte Task Types: DynamicJob,habuelfutuh,agale,03-04-2019 3:24 PM,,
+Critical,Sub-task,Open,MB-1420,718184,531535,Flyte Task Types: Spark,akhurana,agale,03-04-2019 3:23 PM,,
+Critical,Sub-task,Open,MB-1417,717581,531535,Getting Started: How-to Guides: Logging & Monitoring,ccaramanolis,agale,03-04-2019 11:25 AM,,
+Minor,Sub-task,Open,MB-1416,717577,531535,Getting Started: UI tutorial,rschott,agale,03-04-2019 11:24 AM,,"overview key actions/flows of the UI
+ * Using the graph
+ * Canceling an execution
+ * Creating a launch plan
+ * Monitoring 
+ * Debugging 
+
+Video docs eventually? "
+Major,Sub-task,Open,MB-1415,717562,531535,Introduction: Hero use cases,,agale,03-04-2019 11:21 AM,,"Overview 3-5 customer testimonials for Flyte, covering how we deliver end-impact to partner teams/Lyft and make our users' lives better. "
+Major,Sub-task,Open,MB-1414,717556,531535,FAQ,,agale,03-04-2019 11:19 AM,,
+Critical,Sub-task,Open,MB-1413,717554,531535,API Reference: Automatic generation ,ccaramanolis,agale,03-04-2019 11:18 AM,,
+Major,Sub-task,Open,MB-1412,717552,531535,Extending Flyte: Additional cloud support,,agale,03-04-2019 11:18 AM,,
+Major,Sub-task,Open,MB-1411,717545,531535,Extending Flyte: Additional language support,,agale,03-04-2019 11:17 AM,,
+Major,Sub-task,Open,MB-1410,717542,531535,Extending Flyte: Flyte Plugins,,agale,03-04-2019 11:16 AM,,
+Major,Sub-task,Open,MB-1409,717537,531535,Operations & Administration: Installation ,,agale,03-04-2019 11:15 AM,,* Runbook
+Critical,Sub-task,Open,MB-1408,717535,531535,Getting Started: How-to Guides: Get metrics for your workflows,habuelfutuh,agale,03-04-2019 11:14 AM,,
+Critical,Sub-task,Open,MB-1407,717529,531535,Getting Started: How-to Guides: Debugging your workflows,ytong,agale,03-04-2019 11:12 AM,,"* Includes common reasons for workflow failure, how to identify
+ * UI screenshots where applicable 
+ * Error codes
+ * Local debugging 
+ * Etc"
+Critical,Sub-task,Open,MB-1406,717521,531535,Getting Started: How-to Guides: Backfills,matthewsmith,agale,03-04-2019 11:10 AM,,
+Critical,Sub-task,Open,MB-1403,717513,531535,Getting Started: How-to Guides: Triggering workflows based on events,matthewsmith,agale,03-04-2019 11:09 AM,,
+Major,Sub-task,Open,MB-1398,717437,531535,Introduction: Getting help & staying up-to-date,,agale,03-04-2019 10:52 AM,,"Internal-only for now. 
+
+Basically account for use cases outlined at go.lyft.com/flyte-comms [https://docs.google.com/document/d/12oNzuA-1ei7sb1lg3C6J2nzJYuTCNGQbNuNVocxEp6k/edit#|https://docs.google.com/document/d/12oNzuA-1ei7sb1lg3C6J2nzJYuTCNGQbNuNVocxEp6k/edit]"
+Minor,Sub-task,Open,MB-1397,717334,531535,Getting Started: Advanced examples,,agale,03-04-2019 10:29 AM,,"TBD: what should these examples be? e.g. include parameterization, event-based triggering, discovery, data catalog? "
+Blocker,Sub-task,Open,MB-1396,717290,531535,Getting Started: Quick start to run a simple example (local),ytong,agale,03-04-2019 10:20 AM,,"Ideally <5 minutes/commands the user has their first workflow up and running, including visibility in the UI.
+
+This section takes them through that initial run. 
+
+Examples:
+ * Envoy (I prefer this for its brevity compared to airflow; we will have already covered key concepts in our overview): [https://www.envoyproxy.io/docs/envoy/latest/start/start]
+ * Airflow:
+ ** [https://airflow.apache.org/start.html] and 
+ ** [https://airflow.apache.org/tutorial.html] 
+ * Kubeflow:
+ ** [https://www.kubeflow.org/docs/pipelines/pipelines-quickstart/] <-- better reference than below
+ ** [https://www.kubeflow.org/docs/started/getting-started/] 
+ * Argo: [https://argoproj.github.io/docs/argo/demo.html] 
+
+ "
+Major,Sub-task,Open,MB-1395,717276,531535,Introduction: Comparison to related offerings,,agale,03-04-2019 10:14 AM,,"_Brief_ comparison of Flyte to the following:
+ * Airflow
+ * Kubeflow + Argo
+ * [Eventually we may choose to cover others – but the above two to start]
+
+Cover key differentiators focusing on advantages Flyte offers over these products. "
+Major,Sub-task,Open,MB-1394,717269,531535,Introduction: Architectural Overview,,agale,03-04-2019 10:13 AM,,"High-level architectural overview of flyte covering:
+ # Key concepts
+ # Diagram of how everything works together
+ # Key features and components (feature descriptions include links to configuration/api/metrics/logging/samples in other docs)
+ # Explanation of architectural decisions – answer ""why did you build it this way?""
+
+Examples:
+ * Envoy (mostly just terminology – we definitely want a visual overview to be centerpoint here) [https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/arch_overview]
+ *"
+Major,Sub-task,Open,MB-1393,717233,531535,Introduction: What is Flyte,,agale,03-04-2019 9:58 AM,,"Short (<1 page) summary of what Flyte is and its key features/differentiators. 
+
+ 
+
+Examples:
+ * Envoy: [https://www.envoyproxy.io/docs/envoy/latest/intro/what_is_envoy]
+ * Airflow: [http://airflow.apache.org/]
+ * Kubeflow: [https://www.kubeflow.org/docs/about/kubeflow/]"
+Critical,Task,Open,MB-1386,715359,,Alarms for Propeller Ready for GA,habuelfutuh,matthewsmith,02-28-2019 9:09 PM,MB-1194,
+Minor,Task,Open,MB-1375,715027,,UI Node process should use a process monitor,rschott,rschott,02-28-2019 3:43 PM,MB-1563,"k8s does have restart logic for pods, but in many cases, we don't need a full destroy/re-create of the pod when Node crashes. The common practice is to use a lightweight process monitor to restart the process when it dies. 
+
+Optionally, we can configure the process monitor to give up if it's unable to restart after X tries, so that we can let k8s destroy/re-create the pod in a more aggressive attempt to fix things."
+Major,Sub-task,Open,MB-1349,678657,678654,ArrayTask Plugin kicks off Nodes,,achan,02-13-2019 4:15 PM,,
+Major,Sub-task,Open,MB-1347,671084,654359,Discovery input max limits should be more explicit,,achan,02-12-2019 1:08 PM,,"Discovery can hit size limits if the inputs are larger than ~4MB. We should see what the source of this limit is and provide a more explicit warning/error when discoverable tasks hit it. 
+
+ 
+
+[https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logEventViewer:group=/aws/batch/job;stream=mb-simulatorworkflows-development/default/2de46f7f-5505-4caa-ada2-871db199736c;start=2019-02-11T00:00:00Z;end=2019-02-12T17:49:19Z]
+
+ 
+{code:java}
+WARNING:root:Retriable failure: <_Rendezvous of RPC that terminated with:17:48:57status = StatusCode.RESOURCE_EXHAUSTED17:48:57details = ""grpc: received message larger than max (4245743 vs. 4194304)""17:48:57debug_error_string = ""{""created"":""@1549993737.721848107"",""description"":""Error received from peer"",""file"":""src/core/lib/surface/call.cc"",""file_line"":1036,""grpc_message"":""grpc: received message larger than max (4245743 vs. 4194304)"",""grpc_status"":8}""17:48:57>17:48:57WARNING:root:Failed to get artifact with id: name: ""simulator_workflows.tasks.simulation:simulate_hours_v3""17:48:57version: ""dev-0.30""17:48:57inputs {17:48:57name: ""data_cfgs""17:48:57value: ""EAoYAiKKBBKHBApNCkt6SQoScGFzc2VuZ2VyX3Nlc3Npb25zEgNTSkM6BDIxLjBCEzIwMTktMDEtMjFUMjI6NDU6MDBKEzIwMTktMDEtMjJUMDE6MDU6MDAKSQpHekUKD2RyaXZlcl9zZXNzaW9ucxIDU0pDOgMyLjNCEzIwMTktMDEtMjFUMjM6NDU6MDBKEzIwMTktMDEtMjJUMDE6MDU6MDAKTwpNeksKFWRyaXZlcl9pbml0aWFsX3N0YXRlcxIDU0pDOgMyLjdCEzIwMTktMDEtMjFUMjM6NDU6MDBKEzIwMTktMDEtMjJUMDE6MDU6MDAKWwpZelcKIWhpc3RvcmljYWxfZmFjdF9yaWRlX21hdGNoX3dpbmRvdxIDU0pDOg17:48:57}
+{code}
+ 
+
+Code: [https://github.com/lyft/modelbuilderagent/blob/master/pkg/services/discoveryclient/discovery.go#L17]
+
+ "
+Major,Sub-task,Open,MB-1344,663111,654359,Transition Catalog to K8s native,,achan,02-07-2019 6:06 PM,,
+Major,Sub-task,Open,MB-1343,663091,654359,Support Lineage for Task outputs,,achan,02-07-2019 5:57 PM,,
+Major,Sub-task,Open,MB-1342,663090,654359,Support Catalog Tags and Metadata in Flyte 2.0,,achan,02-07-2019 5:57 PM,,
+Major,Sub-task,Open,MB-1341,663089,654359,Create new Catalog v2 service,,achan,02-07-2019 5:57 PM,,
+Minor,Bug,Open,MB-1333,653134,,Ensure Error Messages Render Correctly for Entities When Config is Not Set,matthewsmith,matthewsmith,02-05-2019 5:21 PM,MB-1525,
+Minor,Task,Open,MB-1332,650736,,Add validation methods to admin,krogan,ccaramanolis,02-04-2019 12:13 PM,MB-1563,"cc [~krogan]
+Some requests https://lyft.slack.com/archives/CC7AYB5GE/p1549311055001500"
+Major,Sub-task,Open,MB-1329,650072,650070,K8s deployment of discovery service ,jburns,habuelfutuh,02-04-2019 9:10 AM,,
+Major,Story,Open,MB-1322,650006,,Support Calling External Services,ccaramanolis,habuelfutuh,02-04-2019 8:17 AM,MB-1563,
+Major,Task,Open,MB-1300,632013,,Implement new walkthrough components,rschott,rschott,01-25-2019 5:29 PM,MB-1563,"The Walkthrough implementation in 1.0 wasn't great, and we've changed the way data storage works in 2.0. So all of the code for walkthrough has been removed until we determine what the experience should actually look like. This task is a placeholder for implementing the new walkthrough"
+Minor,Story,Open,MB-1290,629263,,Design and Implement Flyte Tolerations/Affinity/Scheduler and other k8s specific stuff,,kumare,01-23-2019 3:42 PM,MB-1563,"Currently this is implemented as hack in the plugins
+ Hack 1: Tolerations for gpu
+ Hack 2: remove support for storage/ephimeral storage"
+Critical,Task,Open,MB-1287,626287,,Test coverage as check-in gate,jburns,habuelfutuh,01-22-2019 4:10 PM,MB-1525,
+Major,Bug,Open,MB-1279,625902,,Use explicit schema to define tmp_table behind `create_from_hive_query`,ytong,chopkins,01-22-2019 1:53 PM,MB-1563,https://lyft.slack.com/archives/C5H3A2665/p1548192513309100
+Major,Task,Open,MB-1277,620632,,Compiler tests,habuelfutuh,habuelfutuh,01-18-2019 11:39 AM,MB-1525,
+Major,Sub-task,Open,MB-1268,620428,620396,A nested workflow,,habuelfutuh,01-18-2019 10:32 AM,,
+Major,Sub-task,Open,MB-1267,620427,620396,Coverage of all task types,,habuelfutuh,01-18-2019 10:31 AM,,
+Major,Sub-task,Open,MB-1263,620392,620385,Basic snapshot tests?,,habuelfutuh,01-18-2019 10:23 AM,,The first one will probably be the hardest to add but it will pave the way to adding more in the future.
+Major,Sub-task,Open,MB-1262,620390,620385,Test coverage for model layer,,habuelfutuh,01-18-2019 10:22 AM,,
+Minor,Task,Open,MB-1260,620385,,UI/UX tests,rschott,habuelfutuh,01-18-2019 10:21 AM,MB-1525,
+Major,Task,Open,MB-1244,597776,,Investigate log format for flyte 2.0,,ccaramanolis,01-10-2019 3:14 PM,MB-1563,"Since we allow for all forms of logging it ends up our users will have odd log formats in cloudwatch - it might be advisable to have a defined log format (that is configurable) that way we can guarantee what things look like when we post the logs to a provider
+
+Here is a thread for context 
+https://lyft.slack.com/archives/C5H3A2665/p1547139615194900
+
+And here are some sample cloudwatch output https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logEventViewer:group=/flyte-production/kubernetes;stream=var.log.containers.f-9de72f9e-35cb-49b6-91f5-d34ebdbca68b-run-simulation-v3-2lpmlk_production_simulatorworkflows-30c60a72074380b68201645344dfe0e54dbbe42224874be08513019f8a1c664b.log;filter=json;start=2019-01-09T22:24:03Z
+
+https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logEventViewer:group=/flyte-production/kubernetes;stream=var.log.containers.f-9de72f9e-35cb-49b6-91f5-d34ebdbca68b-run-simulation-v3-2lpmlk_production_matching-8f00f1d6ebc700ea449982abd6650e8d1c8591de924a5431434ac56fc331a7cf.log;start=2019-01-09T22:24:03Z
+
+and the logs out of the container 
+https://drive.google.com/open?id=1JdI8Q38fHPQxOu95SqNwHc6pk1uaQaCA"
+Minor,Task,Open,MB-1225,554537,,Ability to fail a hive task if output is empty,matthewsmith,econlon,12-14-2018 1:52 PM,MB-1563,"quoting from slack
+
+""Can we please have an option to fail a hive task if the output is empty? This is a huge source of error and confusion. See this WF, which ostensibly fails due to empty input, but with a bad error message: https://modelbuilderadmin.lyft.net/executions/d3c08566-75f1-4550-8621-b1c4547da25a .  It’s also frustrating to have empty results cached and not be able to retrigger a workflow (when empty results indicate late hive partitions)"""
+Major,Task,Open,MB-1218,553749,,Auto Version,,gkedia,12-13-2018 3:17 PM,MB-1563,"It'll be great to have an auto version option for discoverability where if the code for the task changes, the version auto-increments. This will prevent us from forgetting to update the version manually which leads to turning discoverability off.
+
+Manual versions give fine controls over when a change is meaningful enough to bump the version so it'll be useful to support even with auto versions."
+Major,Task,Open,MB-1216,550508,,Productionize the Graph components,rschott,rschott,12-11-2018 10:17 AM,MB-1563,"Encapsulates final cleanup of the graph for production use, including adding tests/snapshots
+
+
+A TODO in code was at line 68 of src/components/flytegraph/layoutUtils.ts on 7/30/2019
+A TODO in code was at line 95 of src/components/flytegraph/layoutUtils.ts on 7/30/2019"
+Minor,Task,Open,MB-1215,550484,,Move flytegraph into a separate package,rschott,rschott,12-11-2018 10:04 AM,MB-1563,"The graph components in the console are designed to be a reusable package, but while it's under active development I'm leaving it inside the flyteconsole repo. This ticket is for tracking the work to be done to publish it as a standalone package."
+Major,Task,Open,MB-1206,547279,,Graph Enhancements,rschott,rschott,12-06-2018 3:54 PM,MB-1563,"This is to cover any overflow / nice-to-haves on the graph implementation after the initial usable version. Some ideas:
+ * Diving into layers of the graph (i.e. expanding subworkflow nodes inline)
+ * Zooming/panning
+ * Hover animations, including highlighting data flow in adjacent nodes
+ * Animations on nodes in progress
+ * Different rendering for nodes which were not executed"
+Major,Task,Open,MB-1195,543387,,Specification for Parallel Node,matthewsmith,matthewsmith,12-03-2018 4:24 PM,MB-1563,
+Major,Bug,Open,MB-1189,540271,,Handle edge cases around schedule updates,krogan,krogan,11-29-2018 1:52 PM,MB-1838,"Background: We don't have any transactional guarantees for the case where a schedule rule in cloudwatch is say, deleted but the subsequent database update fails. Although we return an error and a user can retry (and the delete call to cloudwatch is idempotent) unless the user retries we have no guarantee of being in a non-corrupt state.
+
+ 
+
+We could update the scheduled workflow event dequeuing logic to trigger a call to delete a rule when no active launch plan versions exist. Unfortunately there's a possible race condition this exposes in the case of an end-user calling disable in one step, and then enable separately after that.
+
+ 
+
+As a solution, [~matthewsmith] proposed adding an epoch to schedule names to distinguish them. Since we already want to make schedule names more descriptive (with some kind of truncated project & domain in the name) that work can fall under this work item."
+Minor,Task,Open,MB-1187,537578,,Switch flyteidl output to be commonjs,rschott,rschott,11-27-2018 1:35 PM,MB-1563,"flyteidl is currently being output as an es6 module, which makes it incompatible with NodeJS unless it is run through webpack first. There's no real reason to do it that way, and protobufjs supports commonjs output, so we should switch to that."
+Minor,Task,Open,MB-1184,536520,,Airflow DAG Compiler,,agale,11-26-2018 3:07 PM,MB-1563,Please integrate with Airflow so I can run my Airflow DAGs on Flyte.
+Minor,Task,Open,MB-1182,534966,,Flytekit Test Debt,matthewsmith,matthewsmith,11-21-2018 3:49 PM,MB-1525,"Need to test (or audit tests for):
+
+ 
+
+Registration
+
+Execute
+
+CLI
+
+pyflyte
+
+ 
+
+Introduce mocks for Flyte admin grpc client."
+Critical,Task,Open,MB-1178,531535,,Write Documentation,agale,agale,11-16-2018 1:57 PM,MB-1737,
+Major,Task,Open,MB-1161,525166,,Default timeout policy,habuelfutuh,matthewsmith,11-09-2018 1:21 PM,MB-1563,"Right now if a container is misconfigured or something, the job sticks around forever.  Propeller should garbage collect and fail."
+Minor,Task,Open,MB-1160,525149,,Flesh Out Extension/Plugin Approach for Types,matthewsmith,matthewsmith,11-09-2018 1:14 PM,MB-1563,"This is to support the integration of a schema object without necessarily bringing in execution dependencies (pandas, parquet, etc.).  Essentially decoupling specing and execution for types as we are doing with tasks."
+Minor,Task,Open,MB-1153,525015,,"Bonus Feature: Improve customization (tagging, custom messages, etc.) of notifications",ccaramanolis,matthewsmith,11-09-2018 11:55 AM,MB-1563,
+Minor,Task,Open,MB-1152,525012,,Notifications for Nodes in Admin,achan,matthewsmith,11-09-2018 11:54 AM,MB-1563,Respond to node events with notifications.
+Minor,Task,Open,MB-1151,525010,,Notifications for Nodes in SDK,matthewsmith,matthewsmith,11-09-2018 11:53 AM,MB-1563,Implement specification of nodes in SDK.
+Major,Task,Open,MB-1150,525008,,Specification for Node-Level Notfication Behavior,matthewsmith,matthewsmith,11-09-2018 11:51 AM,MB-1563,It has been requested to support notifications at the node level.  We need a spec for this because it has implications for our eventing approach from Propeller to Admin.
+Minor,Task,Open,MB-1145,524997,,Parallel Node Executions (UI),rschott,matthewsmith,11-09-2018 11:45 AM,MB-1563,Ensure we have a good visualization for parallel nodes in the UI.
+Minor,Task,Open,MB-1144,524995,,Parallel Node Executions (CLI),ytong,matthewsmith,11-09-2018 11:44 AM,MB-1563,Ensure parallel node executions are visible in a reasonable manner in the CLI.
+Minor,Task,Open,MB-1141,524802,,Parallel Node and Iterators (IDL Changes),matthewsmith,matthewsmith,11-09-2018 10:20 AM,MB-1563,"Parallel Node concept allows native parallelization of any node type over an input set. For example, Parallel Node A input is a list of Strings (of size n) and the underlying target is a Subworkflow that takes a single string as an input. Execution layer will automatically spawn off n instances of the subworkflow to execute on each of the inputs...
+
+Parallel nodes will need an 'iterator definition' to define how to parallelize input bindings.  We should aim to support zip (with and without defaults for unaligned iterators) and cross."
+Minor,Task,Open,MB-1140,524759,,Parallel Node Validation (Admin Side),krogan,matthewsmith,11-09-2018 10:07 AM,MB-1563,Minor task to ensure validation for parallel node is managed appropriately.
+Minor,Task,Open,MB-1139,524753,,Parallel Node (SDK Side),matthewsmith,matthewsmith,11-09-2018 10:05 AM,MB-1563,Adjust the SDK to simplify the specification of parallel nodes.  We should support features like: zip and cross (perhaps even nested).
+Minor,Task,Open,MB-1138,524747,,Parallel Node (Propeller Side),habuelfutuh,matthewsmith,11-09-2018 10:01 AM,MB-1563,TCS are excited for the native parallelization offered in Flyte 2.0. This task is for the propeller side execution of parallel nodes.
+Major,Sub-task,Open,MB-1136,524661,524624,metrics for logger,,ssingh,11-09-2018 8:57 AM,,Alerts and metrics so we know the backlog on logger and if its working on all nodes.
+Major,Sub-task,Open,MB-1135,524660,524624,logging filename format,,ssingh,11-09-2018 8:56 AM,,enhance rewrite-tag fluentd plugin to use k8s metadata to construct new tag(filename).
+Major,Sub-task,Open,MB-1134,524658,524624,Support Logging policy,,ssingh,11-09-2018 8:55 AM,,"policy based on certain pod labels and filename prefix.
+
+Example- spark executor start with certain prefix and need retention policy of 3 days, while spark driver needs retention period of 1 month."
+Major,Sub-task,Open,MB-1133,524656,524624,Logging IDL and Logging Module,,ssingh,11-09-2018 8:51 AM,,"We want to record more information than just URI, so other components can act accordingly.
+
+IDL: https://github.com/lyft/flyteidl/pull/105/files"
+Minor,Task,Open,MB-1131,523853,,Implement Launch Plan details,rschott,rschott,11-08-2018 11:29 AM,MB-1838,"This will probably be similar to Workflow Version details, in that it will show information from the closure. But it may not show the graph, or it may optionally allow a user to show a graph view of the workflow at that version.
+
+TODO: Determine which details of a LP are useful to show.
+
+A TODO in code was at line 79 of src/components/Launch/SchedulesTable.tsx on 7/30/2019
+ A TODO in code was at line 59 of src/components/Launch/LaunchPlansTable.tsx on 7/30/2019"
+Major,Task,Open,MB-1126,521632,,Define model for input/output egress,,achan,11-06-2018 1:36 PM,MB-1563,"cc [~krogan]
+
+When a GET is issued to the execution manager Admin should download the outputs URI and transform it into literal maps here: https://github.com/lyft/flyteadmin/pull/182/commits/6ad61cc223432567c79d11bd1e40f281540d4573#diff-fc047e54b9dd82ca7c89ac9b32cb07b3R169"
+Major,Task,Open,MB-1113,519785,,Breadcrumbs for the UI,rschott,rschott,11-05-2018 10:17 AM,MB-1525,"We need to determine what info should be available in the breadcrumbs.
+ # Show project, domain, entity type, (sub-entity type),  version. In this case, sub-entity is something like an execution or launch plan belonging to a particular workflow.
+ # Show a static project/domain combo just to set context, but don't make them links, then show the same as in #1
+ # Leave out project/domain entirely"
+Major,Sub-task,Open,MB-1110,517939,517931,Test Statsd is working on Staging Cluster,,akhurana,11-01-2018 5:27 PM,,To ensure user-container metrics are being populated. 
+Major,Sub-task,Open,MB-1109,517938,517931,Fix Dashboard/Ingress on Staging cluster,,akhurana,11-01-2018 5:26 PM,,Add these to genesis-devices if missing so they are auto-deployed. 
+Major,Sub-task,Open,MB-1108,517936,517931,IAM not working in Staging Cluster,,akhurana,11-01-2018 5:25 PM,,
+Major,Sub-task,Open,MB-1107,517935,517931,Central Security Group across Clusters,,akhurana,11-01-2018 5:25 PM,,"We need a central security group (ideally, managed in terraform). We need to be able to add this security group to one or many  k8s cluster in genesis-device.
+
+Need this for HiveMetastore access and other use-cases
+
+ "
+Major,Task,Open,MB-1082,511510,,Document local execution and end-to-end testing strategy,matthewsmith,matthewsmith,10-26-2018 1:46 PM,MB-1737,
+Major,Task,Open,MB-1081,511509,,Document launch plans in SDK,matthewsmith,matthewsmith,10-26-2018 1:46 PM,MB-1737,
+Major,Story,Open,MB-1073,507832,,Figure out validation / default value implementation for JS,rschott,rschott,10-23-2018 2:52 PM,MB-1838,"Problem:
+
+The messages coming back from the API are decoded by protobufjs. But since all the fields in a proto messages are optional by convention, we don't have any assurance that the records are valid and usable. This has caused errors before on the client side.
+
+ 
+
+Solution options:
+ # Manual validation of the records and type-casting (`message as X`) or type-guarding (`: message is X`) to the stricter types present on the client side. This has the advantage of being flexible in the UI requirements, and the disadvantage of being difficult to keep in sync with the protobuf source of truth.
+ # Automated validation via some type of schema definition stored on the client side (JSON Schema is one such option). This has the advantage of generating consistent code on the client side which is kept up-to-date automatically as the schema is updated, as well as providing a schema document that can be used to validate the JSON output from the API. It has the same disadvantage of being a separate solution which must be updated manually any time the API contract changes.
+ # Switch the console to use protoc-generated JS/TS libraries and decorate all protobuf messages with the appropriate validation. This has the advantage of the validation rules being identical on both server and client (and updating automatically) as well as providing a generic solution for validation (call validate() on the message class coming back from the server). It has the disadvantage of requiring a non-trivial amount of work: Switching from protobufjs to protoc, enabling the TS output from protoc, updating console code to work with the new typings and decoding strategy.
+
+Option 3 is ideal, but the amount of work necessary to do so is concerning (especially considering it may not work correctly and we might have to back it out)."
+Minor,Task,Open,MB-1036,504602,,Investigate using gRPC in JS,rschott,rschott,10-19-2018 3:55 PM,MB-1563,
+Major,Sub-task,Open,MB-979,484630,620488,Spark Job operator task events,,achan,09-28-2018 3:02 PM,,
+Major,Sub-task,Open,MB-978,484629,620488,DynamicJob operator task events,,achan,09-28-2018 3:01 PM,,
+Minor,Task,Open,MB-963,478617,,Hotkeys,rschott,rschott,09-21-2018 2:42 PM,MB-1563,"There are probably some hotkeys worth implementing. This is a placeholder to determine what those should be.
+
+Blueprint already has nice support for specifying hotkeys in a component and will generate a nice UI for us to help users learn them."
+Major,Task,Open,MB-941,466075,,send logs to kibana for k8s swarm tasks,,agreenhall,09-06-2018 1:57 PM,MB-1563,"the current system of disappearing logs makes it really hard to debug things. logs in kibana would be great!
+
+cc [~kumare]"
+Major,Story,Open,MB-937,464672,,validate that images exist before launching k8s jobs,,agreenhall,09-05-2018 11:56 AM,MB-1563,"lyft images currently expire after ~1mo. Simulator has run into trouble a few times trying to launch jobs that no longer have images.
+
+see conversation here:
+https://lyft.slack.com/archives/C5H3A2665/p1536173179000100?thread_ts=1536172961.000100&cid=C5H3A2665
+
+cc [~ytong] [~matthewsmith] [~yanshanlu]"
+Minor,Task,Open,MB-932,463304,,Allow light/dark mode switching,rschott,rschott,09-04-2018 11:22 AM,MB-1563,"Blueprint already supports light/dark theming out of the box. But we've made some explicit color decisions in places which would make it difficult to just enable the switch.
+
+-This task would be to update any existing components to support both light and dark mode, and introduce a switch which will:-
+ * -Update the body background color (currently hard-coded in SCSS to the dark mode background)-
+ * -Set or unset the dark mode class on the top level element.-
+
+The theme switching exists now behind a hotkey (alt+shift+d), but is not exposed in the UI. The remaining work is to add a toggle (possibly in the header?) and make sure the blueprint hotkeys UI legend works correctly."
+Minor,Story,Open,MB-866,429245,,Validation of all CRD using OpenAPI spec,changhonghsu,kumare,07-19-2018 10:18 AM,MB-1525,Creating CRDs should not result in a death spiral of the operator. We should provide hooks to validate the spec
+Major,Sub-task,Open,MB-844,416428,416393,Support for Java/Scala Spark ,,akhurana,06-29-2018 11:46 AM,,
+Minor,Task,Open,MB-806,410454,,Document ECR Pruner,jburns,jburns,06-20-2018 5:50 PM,MB-1838,Let stakeholders know that any scheduled jobs should be deployed to production
+Minor,Story,Open,MB-702,384691,,Create Flyte Admin API JS client library,rschott,rschott,05-11-2018 11:57 AM,MB-1563,
+Major,Story,Open,MB-695,383996,,Micro Workflows,,gsnelling,05-10-2018 12:16 PM,MB-1563,
+Major,Sub-task,Open,MB-680,381663,383990,Alerts from swarm operator,,ssingh,05-07-2018 8:15 PM,,
+Major,Sub-task,Open,MB-679,381662,383990, Auto register CRD in swarm operator,ytong,ssingh,05-07-2018 8:14 PM,,
+Major,Sub-task,Open,MB-632,367955,383931,View failed scheduled workflow executions and enable rerun,rschott,krogan,04-17-2018 11:49 AM,,
+Major,Sub-task,Open,MB-620,367916,383999,CRUD operations for workflow schedules,rschott,krogan,04-17-2018 11:35 AM,,
+Minor,Task,Open,MB-617,367897,,Allow download of Inputs / Outputs,rschott,rschott,04-17-2018 11:24 AM,MB-1563,"It's unclear exactly what format things should be in, but for I/O types like CSV/Blob/Schema we should be able to provide a download link for the user.
+
+Options:
+ # Convert it to a signed S3 link. This is probably not the right move because we need to verify the identity of a user before allowing them to download
+ # Convert the s3:// protocol to an actual s3 link. It would be up to the user to ensure they are assuming the correct role to be able to download the file.
+
+Likely it will be option 2.
+
+For things like CSV list, we have to consider how to display a list of these items."
+Major,Sub-task,Open,MB-592,363590,429245,Validation for Flyte swarm operator,ytong,ytong,04-10-2018 3:15 PM,,"The current custom resource definition doesn't have validation.  Let's add it.
+
+That is, currently if someone creates an instance of a SwarmJob that doesn't conform to the layout we've specified in [types.go|https://github.com/lyft/flyteswarmoperator/blob/master/pkg/apis/swarmjob/v1alpha1/types.go] then the operator starts throwing opaque errors that are hard to discern.
+
+Kubernetes CRDs support the concept of validation - https://kubernetes.io/docs/tasks/access-kubernetes-api/extend-api-custom-resource-definitions/#validation
+
+Let's think about using it."
+Major,Task,Open,MB-584,362234,,Produce a report for potentially discoverable tasks,,habuelfutuh,04-09-2018 11:38 AM,MB-1563,"We should create a report based on our redshift data to give advice to customers on refactoring/optimizations opportunities. 
+
+One such optimization is marking tasks as discoverable. To do that we can run a query like:
+ * Count how many executions of a given not-discoverable task_instance with the same inputs & version that produced the same outputs.
+We can then suggest:
+""This task looks like it can safely be cached, consider marking it as discoverable. If the task does have side effects (e.g. updates dynamoDB), consider split it into two tasks to maximize discoverability. Marking tasks as discoverable can potentially reduce your overall execution time significantly. <insert some stat here to show that>"" "
+Major,Sub-task,Open,MB-572,358371,358348,Scheduled runs on Release Train branch,,achan,04-03-2018 10:55 AM,,
+Major,Sub-task,Open,MB-571,358367,358348,Add Spark functional test,,achan,04-03-2018 10:51 AM,,
+Major,Sub-task,Open,MB-570,358361,358348,Timeout on long running functional tests,,achan,04-03-2018 10:49 AM,,Avoid long running functional tests since Qubole/Batch can queue up for long periods
+Major,Sub-task,Open,MB-569,358359,358348,Add alerting/stats to functional tests,,achan,04-03-2018 10:47 AM,,
+Major,Sub-task,Open,MB-568,358358,358348,Do not run a functional test if there is already one running,,achan,04-03-2018 10:46 AM,,"Check if there is a previously running functional test, and cancel the current workflow if there is"
+Major,Sub-task,Open,MB-567,358356,358348,Separate out Hive Task as a separate functional test,,achan,04-03-2018 10:44 AM,,
+Major,Sub-task,Open,MB-566,358351,358348,Fix MBApi production run of functional tests,,achan,04-03-2018 10:41 AM,,https://modelbuilderadmin.lyft.net/repositories/modelbuilderapi/instances/2/executions
+Major,Sub-task,Open,MB-562,355236,354414,Re-run a single task from a remote execution locally,,matthewsmith,03-28-2018 5:06 PM,,Must verify that structure is well-formed and then bring data locally and execute.
+Major,Sub-task,Open,MB-561,355234,354414,Continue Executions Locally with Local Code for Debugging,,matthewsmith,03-28-2018 5:02 PM,,1.  Validate that the local code is well-formed enough for this to work.
+Major,Sub-task,Open,MB-560,355230,354414,Add Task Mocking,,matthewsmith,03-28-2018 5:01 PM,,"See design doc:
+
+https://docs.google.com/document/d/1K5OWJiabc_Q8_WijNwe65qL2sXE9LYYbDjmpE2g8Fjc/edit#heading=h.c6i1yqsw2xxm"
+Major,Story,Open,MB-554,354418,,Dynamic Overrides to Workflow/Task Behavior,,matthewsmith,03-27-2018 11:42 PM,MB-1563,
+Major,Story,Open,MB-552,354415,,Basic arithmetic for inputs (i.e. KickoffTime() + timedelta(days=1)),,matthewsmith,03-27-2018 11:12 PM,MB-1563,
+Major,Story,Open,MB-551,354414,,Local Execution Improvements,matthewsmith,matthewsmith,03-27-2018 11:09 PM,MB-1525,"Design doc:
+
+https://docs.google.com/document/d/1K5OWJiabc_Q8_WijNwe65qL2sXE9LYYbDjmpE2g8Fjc/edit#heading=h.c6i1yqsw2xxm"
+Major,Sub-task,Open,MB-549,354313,354414,wf_params.logging.* should be wrapped to print information when running in local engine,,matthewsmith,03-27-2018 4:54 PM,,
+Major,Sub-task,Open,MB-546,354059,354032,Summary information for Subtasks,,kumare,03-27-2018 2:17 PM,,
+Major,Sub-task,Open,MB-545,354057,354032,[FlyteClient] Reconstruct Sudo-WF from Graph Representation,,habuelfutuh,03-27-2018 2:14 PM,,"Nodes should expose:
+ * Inputs/Outputs
+ * Status
+ * A way to traverse children"
+Major,Sub-task,Open,MB-544,354056,354032,[Admin] Store/Serve workflow graph representation,,habuelfutuh,03-27-2018 2:13 PM,,
+Major,Sub-task,Open,MB-543,354054,354032,[SDK] Push our graph representation to Admin,,habuelfutuh,03-27-2018 2:12 PM,,
+Major,Sub-task,Open,MB-540,353751,329638,API: Clean-up Current Spark Impl + Write Promises,habuelfutuh,akhurana,03-27-2018 11:08 AM,,
+Major,Sub-task,Open,MB-504,345758,345754,SDK Changes (Accept Graph and Pointer Location to Bootstrap Execution),,matthewsmith,03-13-2018 1:36 PM,,
+Major,Sub-task,Open,MB-503,345756,345754,Lyft-IDL Graph Objects,,matthewsmith,03-13-2018 1:34 PM,,
+Major,Sub-task,Open,MB-502,345755,345754,Design Graph-Based Execution,,matthewsmith,03-13-2018 1:34 PM,,
+Critical,Story,Open,MB-498,345369,,Sphinx Public SDK Documentation,matthewsmith,matthewsmith,03-13-2018 12:03 AM,MB-1525,
+Major,Story,Open,MB-487,343566,,Event Streams from ModelbuilderAdmin,,kumare,03-08-2018 6:06 PM,MB-1563,"Users would like to use Event streams available from Flyte after every task or workflow completion. One of the first usecases is MapWorkflows
+
+We have decided to work with Mapping to come up with an intermediate solution, in their words
+ 
+_Just wanted to summarize our agreement;_
+_We will work together to set up a way to share the DB write stream queue, currently only to update the DB, so we can read that stream from our_ catalog _service._
+_When we have Kafka up and running, we will migrate the stream reading to Kafka._
+_Let’s put this item_ in _our roadmap, and I’ll discuss with you guys to find a time to work together (I can go up to Seattle)._"
+Major,Sub-task,Open,MB-446,339802,345754,Refactor Engine Shim to not Take **kwargs,,matthewsmith,03-02-2018 4:04 PM,,Should be through a consistent interface.  Perhaps lyft-idl protos
+Major,Sub-task,Open,MB-300,320654,384858,Rename Lyft IDL units,,kumare,01-26-2018 2:18 PM,,
+Critical,Task,Open,MB-290,320628,,Store User information per Admin modify/write action,ytong,kumare,01-26-2018 1:48 PM,MB-1848,"A launch, create, schedule change etc should result in saving the associated user in the db"
+Major,Sub-task,Open,MB-286,320124,384856,Rename story for All Admin tables and Workflow names,,aswaminathan,01-25-2018 3:13 PM,,How will old entries look like.!
+Major,Story,Open,MB-282,319637,,Dynamic Multi-Step Parallel Branches,,matthewsmith,01-24-2018 11:20 PM,MB-1563,Currently we can spread work horizontally for a single step.  It would be nice if we could dynamically fan out work through multiple steps and let eat branch continue without waiting.  Only join at the very end.
+Major,Sub-task,Open,MB-281,319636,384854,Refactoring of Client Modules,,matthewsmith,01-24-2018 11:04 PM,,
+Major,Sub-task,Open,MB-280,319635,384854,Client Transition Strategy,,matthewsmith,01-24-2018 11:04 PM,,
+Major,Sub-task,Open,MB-279,319634,384854,Rename User Documentation ,,matthewsmith,01-24-2018 11:03 PM,,
+Major,Sub-task,Open,MB-278,319633,384854,Rename SDK Components,,matthewsmith,01-24-2018 11:01 PM,,
+Major,Story,Open,MB-274,319626,,Multi-Lang Support,,matthewsmith,01-24-2018 10:07 PM,MB-1563,
+Critical,Task,Open,MB-271,319623,,FAQ solution for Open Source,agale,matthewsmith,01-24-2018 10:04 PM,MB-1525,
+Major,Sub-task,Open,MB-258,319248,302294,Support addition of notifications via cmd line in SDK,,matthewsmith,01-24-2018 1:32 PM,,
+Major,Sub-task,Open,MB-200,282170,354418,Workflow Execution Scoped Runtime Overrides for Modelbuilder Platform,matthewsmith,matthewsmith,10-26-2017 11:28 AM,,"Need a flexible way to provide overrides but scoped within the execution of workflow.  This will help in scenarios like:
+
+1) My workflow is behaving oddly and I want to turn off discovery w/o waiting for a build or manually turning off discovery for a given task.
+
+2) I want to specify a different cluster or other resources for a given workflow execution.
+
+3) I want to request additional CPU/Memory/etc. for a task(s) but only in the context of a given workflow execution.
+
+      a) Bonus points: allow for dynamic sizing based on upstream outputs
+
+4) Just faster iteration in general in dealing with the 'control plane' aspects of workflow execution.
+
+ 
+
+[~jacobscott] FYI"
+Critical,Task,Open,MB-167,255364,,Add Auth to Console,rschott,rschott,08-17-2017 12:33 PM,MB-1848,"Depends on Ctrl plane figuring out auth apis and plumbing through the mbcli.  Admin API will likely begin requiring an auth token for requests, so we should pass the token to the client side."
+Major,Task,Open,MB-163,302294,,Support specifying notifications when launching workflows via the UI,rschott,rschott,12-13-2017 3:03 AM,MB-1525,"The Inputs for launching a workflow accept a `Notifications` fields, which can be used to specify notification rules for specific states. It's a little complicated (can be email, PD, Slack to multiple recipients for multiple states), so we'll tackle it as a separate task."
+Minor,Task,Open,MB-157,292297,,Handle error codes from Admin API,rschott,rschott,11-17-2017 7:07 AM,MB-1563,"The Admin API returns error code values that we can use to show more informative errors to users.
+
+For instance, instead of 404s, it will return a 400 with error code 2 to indicate that an item wasn't found.
+
+ "
+Major,Task,Open,MB-156,302295,,Support scheduling of workflows via the UI,rschott,rschott,12-13-2017 3:04 AM,MB-1525,
+Minor,Story,Open,MB-132,291838,,Render Logs directly in the UI,rschott,rschott,11-16-2017 8:13 AM,MB-1563,"We have enough information from activity execution entity to make calls directly to AWS to retrieve log stream events.
+
+Accessing log streams requires specific permissions. These won't exist on the client (nor should they). But the server side could be granted that role and be a proxy for the logs.
+
+So it might look something like this:
+ * Client makes a request to UI server side to open logs for a specific execution, passing the execution ID. This opens a long-lived TCP request which will be used to stream the log back to the client
+ * Server-side opens a connection to AWS to get the log stream for that execution. These have to be retrieved in chunks. Server-side begins streaming the chunks to the client
+ * Server-side listens for (pings? Can AWS do push for these?) additional log stream lines and pushes them to the client as they are discovered.
+
+Questions/Concerns:
+ * This could be simpler if there was a way for the UI to retrieve a temporary token to use for AWS access. Can the server generate one of these and return it?
+ * How do we know when the log stream has ended and we can close the connection to the client? Can we check for a specific string in it? 
+ * Each one of these will consume a connection to the server and hold it open for what could be a long time. This could cause resource constraints, but we can always scale the UI servers to accomodate
+ * Should we consider web sockets for this type of thing? We could have a mechanism where, while an active websocket connection is open watching a particular execution, the server-side will continue to poll for the latest logs and deliver them to whatever listeners are active. This has the benefit of only making the requests to AWS once if there are multiple listeners
+ * If we _do_ use Websockets, this functionality is almost complicated enough to warrant spinning up a separate service to handle it."
+Major,Sub-task,Open,MB-30,272695,319637,Feature Request: Support for Simple AutoBatching for MarketAutomation models,,kumare,10-04-2017 7:38 PM,,
+Major,Sub-task,Open,MB-29,257167,416393,Stability: Mbsystem Spark interface uses LyftIDL,,kumare,08-23-2017 10:45 AM,,
