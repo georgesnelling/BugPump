@@ -112,12 +112,12 @@ function main() {
   authenticate()
     .then(_ => getIssues({}))
     .then(issues => {
-      log("Issues: ", issues.length)
+      log('Issues: ', issues.length)
       issues.forEach(issue => { log(issue) })
     })
     .then(_ => getJirasFromCSV(jiraFile))
     .then(jiras => {
-      log('Jira count: ', jiras.length)
+      log('Jiras : ', jiras.length)
       jiras.forEach(jira => { log(jira) }) })
     .catch(err => { die(err) })
 }
