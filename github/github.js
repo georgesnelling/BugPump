@@ -4,7 +4,7 @@
 
 // which repo
 const owner = 'georgesnelling'
-const repo = 'stuff'
+const repo = 'TestIssues'
 const jiraFile = 'jiras.csv'
 
 
@@ -83,8 +83,9 @@ async function createGitHubIssue(jira) {
 }
 
 
-// Delete all jiras in the repo
-async function deleteAllGitHubIssues() {
+// Close all jiras in the repo
+// Can't delete issues
+async function closeAllGitHubIssues() {
 
 }
 
