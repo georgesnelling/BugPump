@@ -7,6 +7,37 @@ const owner = 'georgesnelling'
 const repo = 'TestIssues'
 const jiraFile = 'jiras.csv'
 
+// Map jira names => github names
+let gitHubUsers = {
+  jiraUser: 'gitHubUser',
+  achan: 'chanadian',
+  ssingh: 'surindersinghp',
+  krogan: 'katrogan',
+  ytong: 'wild-endeavor',
+  rschott: 'schottra',
+  aswaminathan: 'anandswaminathan',
+  jburns: 'jonathanburns',
+  kumare: 'kumare3',
+  matthewsmith: 'matthewphsmith',
+  akhurana: 'akhurana001',
+  changhonghsu: 'bnsblue',
+  habuelfutuh: 'enghabu',
+  gsnelling: 'georgesnelling',
+}
+
+let epics = {
+  1924: 'Pollish',
+  1921: 'Cost',
+  1867: 'OSS',
+  1848: 'Compliance',
+  1838: 'Compliance',
+  1737: 'Docs',
+  1564: 'Pollish',
+  1563: 'Later',
+  1525: 'Trust',
+  1524: 'Compliance',
+  1519: 'Compatibility',
+}
 
 // everyone's favorite
 const _ = require("lodash")
@@ -24,8 +55,8 @@ const ok = new Octokit({ auth: "token " + token })
 
 
 // make sure we're singed in properly
-// github will return a 200 response for an unauthenticated user
-// If the the returned user has an id property it means they have been authenticated
+// github will still return a 200 response for an unauthenticated user
+// If the returned user has an id property it means they have been authenticated
 async function authenticate() {
 
   return await ok.users.getAuthenticated()
@@ -56,11 +87,12 @@ async function getIssues(filter) {
 
 
 // read the jiras
-async function getJirasFromCSV(path) {
+async function getJirasFromCSV(path, sampleEvery) {
 
   const csv = require('csv-parser')
   const fs = require('fs')
   let jiras = []
+  sampleEvery = sampleEvery || 1
 
   return new Promise(function(resolve, reject) {
 
@@ -69,7 +101,9 @@ async function getJirasFromCSV(path) {
       .pipe(csv())
       .on('data', (row) => { jiras.push(row) })
       .on('end', () => {
-        log('Jiras read: ', jiras.length)
+        log('Jira count : ', jiras.length)
+        log('Log every ' + sampleEvery + ' Jiras:')
+        jiras.forEach((jira, i) => { if (i % sampleEvery == 0) log(jira) })
         resolve(jiras)
       })
     })
@@ -80,13 +114,27 @@ async function getJirasFromCSV(path) {
 // Create a github issue from a jira issue
 async function createGitHubIssue(jira) {
 
-}
+  // trim off leading MB-
+  let epicId = jira['Custom field (Epic Link)'].substring(3)
+  log('epicId:', epicId)
 
 
-// Close all jiras in the repo
-// Can't delete issues
-async function closeAllGitHubIssues() {
+  let issue = {
+    owner: gitHubUsers[jira.Reporter] || 'Unknown',
+    title: jira.Summary,
+    body: jira.Description,
+    assignee: gitHubUsers[jira.Assignee],
+    labels: [
+      jira['Isssue Type'],
+      epics.epicId,
+      jira.Priority,
+    ]
+  }
 
+  log('new Issue: ', issue)
+  log('from Jira', jira)
+
+  return ok.issues.create(issue)
 }
 
 
@@ -116,10 +164,9 @@ function main() {
       log('Issues: ', issues.length)
       issues.forEach(issue => { log(issue) })
     })
-    .then(_ => getJirasFromCSV(jiraFile))
-    .then(jiras => {
-      log('Jiras : ', jiras.length)
-      jiras.forEach(jira => { log(jira) }) })
+    .then(_ => getJirasFromCSV(jiraFile, 20))
+    .then(jiras => { (createGitHubIssue(jiras[20])) })
+    .then(issue => { log(issue) })
     .catch(err => { die(err) })
 }
 
