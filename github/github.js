@@ -2,13 +2,26 @@
 // Simple CLI for working with Flyte github API
 //
 
+// only one way to auth: Github personal access tokens as an env var
+// args would be nice
+const token = process.env.GITHUB_TOKEN
+if (!token) die(strs.missing_token)
+
+const Github = require("github-api")
+const gh = new Github({ auth: "token " + token })
+let me = gh.getUser()
+console.log('me:', me)
+
+// everyone's favorite
+const _ = require("lodash")
+
 // which repo
 const owner = 'georgesnelling'
 const repo = 'TestIssues'
 const jiraFile = 'jiras.csv'
 
 // Map jira names => github names
-let gitHubUsers = {
+const gitHubUsers = {
   jiraUser: 'gitHubUser',
   achan: 'chanadian',
   ssingh: 'surindersinghp',
@@ -25,7 +38,7 @@ let gitHubUsers = {
   gsnelling: 'georgesnelling',
 }
 
-let epics = {
+const epics = {
   1924: 'Pollish',
   1921: 'Cost',
   1867: 'OSS',
@@ -39,27 +52,20 @@ let epics = {
   1519: 'Compatibility',
 }
 
-// everyone's favorite
-const _ = require("lodash")
+const priorities = {
+  'Blocker': 'Pri0',
+  'Critical': 'Pri1',
+  'Major': 'Pri2',
+  'Minor': 'Pri3',
+}
 
 
-// only one way to auth: Github personal access tokens as an env var
-// args would be nice
-const token = process.env.GITHUB_TOKEN
-if (!token) die(strs.missing_token)
-
-
-// https://octokit.github.io/rest.js
-const Octokit = require("@octokit/rest")
-const ok = new Octokit({ auth: "token " + token })
-
-
-// make sure we're singed in properly
+// make sure we're signed in properly
 // github will still return a 200 response for an unauthenticated user
 // If the returned user has an id property it means they have been authenticated
 async function authenticate() {
 
-  return await ok.users.getAuthenticated()
+  return await gh.getUser()
     .then(resp => {
       if (resp.data && resp.data.id) {
         let user = resp.data
@@ -79,10 +85,10 @@ async function getIssues(filter) {
   _.merge(filter, { owner: owner, repo: repo })
 
   // this is a confusing sync command due to the design of Oktokit
-  const issueCursor = ok.issues.listForRepo.endpoint.merge(filter)
+  const issueCursor = gh.issues.listForRepo.endpoint.merge(filter)
 
   // returns a promise that returns an array of issues or an error
-  return ok.paginate(issueCursor)
+  return gh.paginate(issueCursor)
 }
 
 
@@ -116,25 +122,29 @@ async function createGitHubIssue(jira) {
 
   // trim off leading MB-
   let epicId = jira['Custom field (Epic Link)'].substring(3)
-  log('epicId:', epicId)
-
 
   let issue = {
-    owner: gitHubUsers[jira.Reporter] || 'Unknown',
+    owner: owner,
+    repo: repo,
     title: jira.Summary,
     body: jira.Description,
     assignee: gitHubUsers[jira.Assignee],
     labels: [
-      jira['Isssue Type'],
-      epics.epicId,
-      jira.Priority,
+      jira['Issue Type'],
+      epics[epicId],
+      priorities[jira.Priority],
     ]
   }
 
-  log('new Issue: ', issue)
   log('from Jira', jira)
+  log('new Issue: ', issue)
 
-  return ok.issues.create(issue)
+  await gh.issues.create(issue, function(err, issue) {
+    if (err) die(err)
+    log('newly saved issue', issue)
+  })
+
+  return issue
 }
 
 
@@ -164,9 +174,9 @@ function main() {
       log('Issues: ', issues.length)
       issues.forEach(issue => { log(issue) })
     })
-    .then(_ => getJirasFromCSV(jiraFile, 20))
-    .then(jiras => { (createGitHubIssue(jiras[20])) })
-    .then(issue => { log(issue) })
+    .then(_ => getJirasFromCSV(jiraFile, 31))
+    .then(jiras => { (createGitHubIssue(jiras[100])) })
+    .then(issue => { log('Saved Githubi issue', issue) })
     .catch(err => { die(err) })
 }
 

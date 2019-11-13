@@ -14,7 +14,7 @@
     }
   ],
   "dependencies": {
-    "@octokit/rest": "^16.35.0",
+    "github-api": "*",
     "csv-parser": "*",
     "lodash": "*"
   }
