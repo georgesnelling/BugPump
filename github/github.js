@@ -7,10 +7,9 @@
 const token = process.env.GITHUB_TOKEN
 if (!token) die(strs.missing_token)
 
+
 const Github = require("github-api")
-const gh = new Github({ auth: "token " + token })
-let me = gh.getUser()
-console.log('me:', me)
+const gh = new Github({ token: token})
 
 // everyone's favorite
 const _ = require("lodash")
@@ -57,25 +56,6 @@ const priorities = {
   'Critical': 'Pri1',
   'Major': 'Pri2',
   'Minor': 'Pri3',
-}
-
-
-// make sure we're signed in properly
-// github will still return a 200 response for an unauthenticated user
-// If the returned user has an id property it means they have been authenticated
-async function authenticate() {
-
-  return await gh.getUser()
-    .then(resp => {
-      if (resp.data && resp.data.id) {
-        let user = resp.data
-        log("Authenticated by Github: ", {user: user.login, id: user.id})
-        return(user)
-      }
-      else {
-        throw new Error('ERROR: Github authentication failed:', resp)
-      }
-    })
 }
 
 
@@ -168,15 +148,19 @@ let die = function(err, code) {
 // main
 function main() {
 
-  authenticate()
-    .then(_ => getIssues({}))
+  const me = gh.getUser()
+  const ghIssues = gh.getIssues(owner, repo)
+
+  me.getProfile()
+    .then(_ => ghIssues.listIssues())
     .then(issues => {
-      log('Issues: ', issues.length)
-      issues.forEach(issue => { log(issue) })
+      log('Issues: ', issues)
+      die('aborted')
+      // issues.forEach(issue => { log(issue) })
     })
     .then(_ => getJirasFromCSV(jiraFile, 31))
     .then(jiras => { (createGitHubIssue(jiras[100])) })
-    .then(issue => { log('Saved Githubi issue', issue) })
+    .then(issue => { log('Saved Github issue', issue) })
     .catch(err => { die(err) })
 }
 
