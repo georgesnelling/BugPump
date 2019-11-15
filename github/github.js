@@ -101,24 +101,31 @@ async function getJirasFromCSV(path, sampleEvery) {
 }
 
 
-// Create a github label, ignore already exists errs
-async function createGitHubLabel(labelName) {
-  log('creating label ', labelName)
+// Create a github labels if they don't already exist
+async function createGitHubLabels(labelNames) {
+  log('creating labels', labelNames)
   let blue = '0000ff'
-  return ghIssues.createLabel( {name: labelName, color: blue} )
-    .then(label => { log ('label created', label); return nil })
-    .catch(ghErr => {
-      log ('error creating ', labelName)
-      try {
-        if (ghErr.reponse.data.errors[0].code == 'already_exists') {
-          log(lableName, ' already exists')
-          return nil  // success
+
+  function createGitHubLabel(labelName) {
+
+    return ghIssues.createLabel( {name: labelName, color: blue} )
+      .then(label => { log ('label created', label); return nil })
+      .catch(ghErr => {
+        log ('error creating ', labelName)
+        try {
+          if (ghErr.reponse.data.errors[0].code == 'already_exists') {
+            log(lableName, ' already exists')
+            return nil  // success
+          }
         }
-      }
-      catch (e) {
-        throw ghErr
-      }
-    })
+        catch (e) {
+          throw ghErr
+        }
+      })
+  }
+
+  // This does not work
+  return Promise.all(labelNames.forEach(labelName => {createGitHubLabel(labelName)}))
 }
 
 // Create a github issue from a jira issue
@@ -142,12 +149,11 @@ async function createGitHubIssue(jira) {
 
   log('new Issue: ', issue)
 
-  // ensure labels exist
-  log('finished creating labels')
-  issue.labels.forEach(label => createGitHubLabel(label))
+  createGitHubLabels(issue.labels)
+    .then(_ => { return ghIssues.createIssue(issue) })
+    .catch(e => {throw e})
 
-  return ghIssues.createIssue(issue)
-}
+  }
 
 
 // soon to be translated into 90 languages
