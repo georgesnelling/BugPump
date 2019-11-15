@@ -2,15 +2,6 @@
 // Simple CLI for working with Flyte github API
 //
 
-// only one way to auth: Github personal access tokens as an env var
-// args would be nice
-const token = process.env.GITHUB_TOKEN
-if (!token) die(strs.missing_token)
-
-
-const Github = require("github-api")
-const gh = new Github({ token: token})
-
 // everyone's favorite
 const _ = require("lodash")
 
@@ -18,6 +9,20 @@ const _ = require("lodash")
 const owner = 'georgesnelling'
 const repo = 'TestIssues'
 const jiraFile = 'jiras.csv'
+
+
+// only one way to auth: Github personal access tokens as an env var
+// args would be nice
+const token = process.env.GITHUB_TOKEN
+if (!token) die(strs.missing_token)
+
+
+// These are constructors that don't actually call Github
+const Github = require("github-api")
+const gh = new Github({ token: token})
+const me = gh.getUser()
+const ghIssues = gh.getIssues(owner, repo)
+
 
 // Map jira names => github names
 const gitHubUsers = {
@@ -96,35 +101,52 @@ async function getJirasFromCSV(path, sampleEvery) {
 }
 
 
+// Create a github label, ignore already exists errs
+async function createGitHubLabel(labelName) {
+  log('creating label ', labelName)
+  let blue = '0000ff'
+  return ghIssues.createLabel( {name: labelName, color: blue} )
+    .then(label => { log ('label created', label); return nil })
+    .catch(ghErr => {
+      log ('error creating ', labelName)
+      try {
+        if (ghErr.reponse.data.errors[0].code == 'already_exists') {
+          log(lableName, ' already exists')
+          return nil  // success
+        }
+      }
+      catch (e) {
+        throw ghErr
+      }
+    })
+}
 
 // Create a github issue from a jira issue
 async function createGitHubIssue(jira) {
+
+  log('from Jira', jira)
 
   // trim off leading MB-
   let epicId = jira['Custom field (Epic Link)'].substring(3)
 
   let issue = {
-    owner: owner,
-    repo: repo,
     title: jira.Summary,
     body: jira.Description,
-    assignee: gitHubUsers[jira.Assignee],
     labels: [
       jira['Issue Type'],
       epics[epicId],
       priorities[jira.Priority],
-    ]
+    ],
+    assignees: [gitHubUsers[jira.Assignee]],  // reporter?
   }
 
-  log('from Jira', jira)
   log('new Issue: ', issue)
 
-  await gh.issues.create(issue, function(err, issue) {
-    if (err) die(err)
-    log('newly saved issue', issue)
-  })
+  // ensure labels exist
+  log('finished creating labels')
+  issue.labels.forEach(label => createGitHubLabel(label))
 
-  return issue
+  return ghIssues.createIssue(issue)
 }
 
 
@@ -140,7 +162,7 @@ let log = console.log
 
 // don't panic, just die
 let die = function(err, code) {
-  console.error(err || 'Error')
+  console.error(err || 'Error', {depth: null})
   process.exit(code || 1)
 }
 
@@ -148,18 +170,14 @@ let die = function(err, code) {
 // main
 function main() {
 
-  const me = gh.getUser()
-  const ghIssues = gh.getIssues(owner, repo)
-
   me.getProfile()
     .then(_ => ghIssues.listIssues())
-    .then(issues => {
-      log('Issues: ', issues)
-      die('aborted')
-      // issues.forEach(issue => { log(issue) })
+    .then(res => {
+      let issues = res.data
+      log ('Github issues read ', issues.length)
     })
-    .then(_ => getJirasFromCSV(jiraFile, 31))
-    .then(jiras => { (createGitHubIssue(jiras[100])) })
+    .then(_ => getJirasFromCSV(jiraFile, 81))
+    .then(jiras => { (createGitHubIssue(jiras[81])) })
     .then(issue => { log('Saved Github issue', issue) })
     .catch(err => { die(err) })
 }
