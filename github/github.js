@@ -3,11 +3,14 @@
 //
 
 // everyone's favorite
-const _ = require("lodash")
+const _ = require('lodash')
+const util = require('util')
 
 // which repo
 const owner = 'georgesnelling'
-const repo = 'TestIssues'
+const repo = 'testissues'
+// const owner = 'lyft'
+// const repo = 'flyte'
 const jiraFile = 'jiras.csv'
 
 
@@ -17,7 +20,7 @@ const token = process.env.GITHUB_TOKEN
 if (!token) die(strs.missing_token)
 
 
-// These are constructors that don't actually call Github
+// These are constructors that don't actually call Github until a method is invoked
 const Github = require("github-api")
 const gh = new Github({ token: token})
 const me = gh.getUser()
@@ -26,7 +29,6 @@ const ghIssues = gh.getIssues(owner, repo)
 
 // Map jira names => github names
 const gitHubUsers = {
-  jiraUser: 'gitHubUser',
   achan: 'chanadian',
   ssingh: 'surindersinghp',
   krogan: 'katrogan',
@@ -65,7 +67,7 @@ const priorities = {
 
 
 // get gitHub issues with a filter param
-async function getIssues(filter) {
+function getIssues(filter) {
 
   _.merge(filter, { owner: owner, repo: repo })
 
@@ -78,7 +80,7 @@ async function getIssues(filter) {
 
 
 // read the jiras
-async function getJirasFromCSV(path, sampleEvery) {
+function getJirasFromCSV(path, sampleEvery) {
 
   const csv = require('csv-parser')
   const fs = require('fs')
@@ -93,8 +95,8 @@ async function getJirasFromCSV(path, sampleEvery) {
       .on('data', (row) => { jiras.push(row) })
       .on('end', () => {
         log('Jira count : ', jiras.length)
-        log('Log every ' + sampleEvery + ' Jiras:')
-        jiras.forEach((jira, i) => { if (i % sampleEvery == 0) log(jira) })
+        // log('Log every ' + sampleEvery + ' Jiras:')
+        // jiras.forEach((jira, i) => { if (i % sampleEvery == 0) log(jira) })
         resolve(jiras)
       })
     })
@@ -102,34 +104,29 @@ async function getJirasFromCSV(path, sampleEvery) {
 
 
 // Create a github labels if they don't already exist
-async function createGitHubLabels(labelNames) {
-  log('creating labels', labelNames)
+function upsertGitHubLabels(labelNames) {
+  log('ensuring labels', labelNames)
   let blue = '0000ff'
 
-  function createGitHubLabel(labelName) {
+  function upsertGitHubLabel(labelName) {
 
     return ghIssues.createLabel( {name: labelName, color: blue} )
-      .then(label => { log ('label created', label); return nil })
+      .then(label => Promise.resolve(labelName))
       .catch(ghErr => {
-        log ('error creating ', labelName)
         try {
-          if (ghErr.reponse.data.errors[0].code == 'already_exists') {
-            log(lableName, ' already exists')
-            return nil  // success
+          if (ghErr.response.data.errors[0].code == 'already_exists') {
+            return Promise.resolve(labelName)
           }
         }
-        catch (e) {
-          throw ghErr
-        }
+        catch (e) { return Promise.reject(ghErr) }
       })
   }
 
-  // This does not work
-  return Promise.all(labelNames.forEach(labelName => {createGitHubLabel(labelName)}))
+  return Promise.all(labelNames.map(upsertGitHubLabel))
 }
 
 // Create a github issue from a jira issue
-async function createGitHubIssue(jira) {
+function createGitHubIssue(jira) {
 
   log('from Jira', jira)
 
@@ -144,17 +141,42 @@ async function createGitHubIssue(jira) {
       epics[epicId],
       priorities[jira.Priority],
     ],
-    assignees: [gitHubUsers[jira.Assignee]],  // reporter?
+    assignees: gitHubUsers[jira.Assignee],
   }
 
-  log('new Issue: ', issue)
-
-  createGitHubLabels(issue.labels)
-    .then(_ => { return ghIssues.createIssue(issue) })
-    .catch(e => {throw e})
-
+  issue = {
+    title: "test issue 2",
+    body: "test issue",
+    labels: [
+      jira['Issue Type'],
+      epics[epicId],
+      priorities[jira.Priority],
+    ],
+    assignees: [gitHubUsers[jira.Assignee]],
   }
 
+  log('Inserting new issue: ', issue)
+
+  return upsertGitHubLabels(issue.labels)
+    .then(labels => {
+      log('labels ensured:', labels)
+      return ghIssues.createIssue(issue)
+    })
+}
+
+function createGitHubIssues(jiras) {
+  let errors = []
+  let issues = []
+  const sleep = 1000
+
+  jiras.forEach(jira => {
+    setTimeout(_ => {
+      return createGitHubIssue(jira)
+        .then(issue => issues.push(issue))
+        .catch(err => errors.push(err))
+    }, sleep)
+  })
+}
 
 // soon to be translated into 90 languages
 const strs = {
@@ -168,7 +190,7 @@ let log = console.log
 
 // don't panic, just die
 let die = function(err, code) {
-  console.error(err || 'Error', {depth: null})
+  console.error(util.inspect(err, {depth: 2}))
   process.exit(code || 1)
 }
 
@@ -182,9 +204,9 @@ function main() {
       let issues = res.data
       log ('Github issues read ', issues.length)
     })
-    .then(_ => getJirasFromCSV(jiraFile, 81))
-    .then(jiras => { (createGitHubIssue(jiras[81])) })
-    .then(issue => { log('Saved Github issue', issue) })
+    .then(_ => getJirasFromCSV(jiraFile))
+    .then(jiras => createGitHubIssue(jiras[43]))
+    .then(issue => log('Saved Github issue', issue))
     .catch(err => { die(err) })
 }
 
