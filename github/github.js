@@ -50,7 +50,7 @@ const epics = {
   1867: 'OSS',
   1848: 'Compliance',
   1838: 'Compliance',
-  1737: 'Docs',
+  1737: 'documentation',
   1564: 'Pollish',
   1563: 'Later',
   1525: 'Trust',
@@ -65,27 +65,12 @@ const priorities = {
   'Minor': 'Pri3',
 }
 
-
-// get gitHub issues with a filter param
-function getIssues(filter) {
-
-  _.merge(filter, { owner: owner, repo: repo })
-
-  // this is a confusing sync command due to the design of Oktokit
-  const issueCursor = gh.issues.listForRepo.endpoint.merge(filter)
-
-  // returns a promise that returns an array of issues or an error
-  return gh.paginate(issueCursor)
-}
-
-
 // read the jiras
-function getJirasFromCSV(path, sampleEvery) {
+function getJirasFromCSV(path) {
 
   const csv = require('csv-parser')
   const fs = require('fs')
   let jiras = []
-  sampleEvery = sampleEvery || 1
 
   return new Promise(function(resolve, reject) {
 
@@ -95,88 +80,140 @@ function getJirasFromCSV(path, sampleEvery) {
       .on('data', (row) => { jiras.push(row) })
       .on('end', () => {
         log('Jira count : ', jiras.length)
-        // log('Log every ' + sampleEvery + ' Jiras:')
-        // jiras.forEach((jira, i) => { if (i % sampleEvery == 0) log(jira) })
         resolve(jiras)
       })
     })
 }
 
 
-// Create a github labels if they don't already exist
-function upsertGitHubLabels(labelNames) {
-  log('ensuring labels', labelNames)
-  let blue = '0000ff'
+// Create an array of Github issues from an array of jiras
+function toIssues(jiras) {
 
-  function upsertGitHubLabel(labelName) {
-
-    return ghIssues.createLabel( {name: labelName, color: blue} )
-      .then(label => Promise.resolve(labelName))
-      .catch(ghErr => {
-        try {
-          if (ghErr.response.data.errors[0].code == 'already_exists') {
-            return Promise.resolve(labelName)
-          }
-        }
-        catch (e) { return Promise.reject(ghErr) }
-      })
-  }
-
-  return Promise.all(labelNames.map(upsertGitHubLabel))
-}
-
-// Create a github issue from a jira issue
-function createGitHubIssue(jira) {
-
-  log('from Jira', jira)
-
-  // trim off leading MB-
-  let epicId = jira['Custom field (Epic Link)'].substring(3)
-
-  let issue = {
-    title: jira.Summary,
-    body: jira.Description,
-    labels: [
-      jira['Issue Type'],
-      epics[epicId],
-      priorities[jira.Priority],
-    ],
-    assignees: gitHubUsers[jira.Assignee],
-  }
-
-  issue = {
-    title: "test issue 2",
-    body: "test issue",
-    labels: [
-      jira['Issue Type'],
-      epics[epicId],
-      priorities[jira.Priority],
-    ],
-    assignees: [gitHubUsers[jira.Assignee]],
-  }
-
-  log('Inserting new issue: ', issue)
-
-  return upsertGitHubLabels(issue.labels)
-    .then(labels => {
-      log('labels ensured:', labels)
-      return ghIssues.createIssue(issue)
-    })
-}
-
-function createGitHubIssues(jiras) {
-  let errors = []
   let issues = []
-  const sleep = 1000
-
   jiras.forEach(jira => {
-    setTimeout(_ => {
-      return createGitHubIssue(jira)
-        .then(issue => issues.push(issue))
-        .catch(err => errors.push(err))
-    }, sleep)
+
+    // log('from jira:', jira)
+    // trim off leading MB-
+    let epicId = jira['Custom field (Epic Link)'].substring(3)
+
+    let issue = {
+      title: jira.Summary,
+      body: jira.Description || '',
+      labels: [
+        jira['Issue Type'],
+        epics[epicId],
+        priorities[jira.Priority],
+      ],
+    }
+
+    // github doesn't like null values
+    let assignee = gitHubUsers[jira.Assignee]
+    if (assignee) { issue.assignees = [assignee] }
+
+    // log('transformed to issue: ', issue)
+    issues.push(issue)
+  })
+  return issues
+}
+
+
+// Create a labels array of the union of all issue labels
+function getLabels(issues) {
+
+  let labelMap = {}
+  issues.forEach(issue => {
+    issue.labels.forEach(label => {
+      labelMap[label] = true
+    })
+  })
+  // log(labelMap)
+
+  return Object.keys(labelMap)
+}
+
+
+// Create github labels if they don't already exist
+function upsertGitHubLabels(labels) {
+
+  const blue = '0000ff'
+  const sleep = 100
+  let ghLabels =[]
+
+  return new Promise(function(resolve, reject) {
+
+    function upsertGitHubLabel(i) {
+
+      log('upserting ', i)
+      if (labels[i] && i < (labels.length - 1)) {
+
+        setTimeout(_ => {
+
+          let newLabel = {name: labels[i], color: blue}
+          log({newLabel: newLabel})
+          i = i + 1
+
+          ghIssues.createLabel(newLabel)
+            .then(ghLabel => {
+              log({ghLabel: ghLabel})
+              ghLabels.push(ghLabel)
+              upsertGitHubLabels(i)  // recurse
+            })
+            .catch(ghErr => {
+              try {
+                if (ghErr.response.data.errors[0].code == 'already_exists') {
+                  log('already exists')
+                  upsertGitHubLabels(i)  // recurse              }
+                }
+              }
+              catch (e) { return reject(ghErr) }
+            })
+        }, sleep)
+      } else {
+        return resolve(ghLabels)
+      }
+    }
+
+    // Kick it off
+    upsertGitHubLabel(0)
   })
 }
+
+
+function createGitHubIssues(issues) {
+
+  log('createGitHubIssues', issues.length)
+
+  let results = {issues: [], errors: []}
+  const sleep = 100
+
+  function insertIssue(i) {
+    log('inserting issue ', i)
+    setTimeout(function() {
+      if (i < proms.length) {
+        log('i:', i)
+        proms[i]
+           .then(issue => {
+             log('proms issue.Summary', issue.Summary)
+             results.issues.push(issue)
+             insertIssue(++i)
+           })
+           .catch(err => {
+             log('proms err', err)
+             results.errors.push(err)
+             insertIssue(++i)
+           })
+      } else {
+        if (results.issues.length) {
+          return resolve(results)
+        } else {
+          return reject(results)
+        }
+      }
+    }, sleep)
+  }
+
+}
+
 
 // soon to be translated into 90 languages
 const strs = {
@@ -189,24 +226,42 @@ let log = console.log
 
 
 // don't panic, just die
-let die = function(err, code) {
-  console.error(util.inspect(err, {depth: 2}))
-  process.exit(code || 1)
+let die = function(err) {
+  console.error(util.inspect(err, {depth: 4}))
+  process.exit(1)
 }
+
+
+// Just in case...
+process.on('unhandledRejection', (err) => {
+  console.error('unhandled rejection')
+  die(err)
+})
 
 
 // main
 function main() {
 
+  let issues = []
+  issueFilter = {}
+
   me.getProfile()
     .then(_ => ghIssues.listIssues())
     .then(res => {
-      let issues = res.data
-      log ('Github issues read ', issues.length)
+      let ghIssues = res.data
+      log ('Github issues read ', ghIssues.length)
     })
     .then(_ => getJirasFromCSV(jiraFile))
-    .then(jiras => createGitHubIssue(jiras[43]))
-    .then(issue => log('Saved Github issue', issue))
+    .then(jiras => {
+      log('jiras read', jiras.length)
+      issues = toIssues(jiras)
+      return upsertGitHubLabels(getLabels(issues))
+    })
+    .then(labels => {
+      log({ghLabels: labels})
+      return createGitHubIssues(issues)
+    })
+    .then(results => log({results: results}))
     .catch(err => { die(err) })
 }
 
