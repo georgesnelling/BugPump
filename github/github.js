@@ -135,41 +135,42 @@ function getLabels(issues) {
 // Create github labels if they don't already exist
 function upsertGitHubLabels(labels) {
 
-  const blue = '0000ff'
-  const sleep = 100
-  let ghLabels =[]
-
   return new Promise(function(resolve, reject) {
 
     function upsertGitHubLabel(i) {
 
-      log('upserting ', i)
+      const blue = '0000ff'
+      const sleep = 100
+
       if (labels[i] && i < (labels.length - 1)) {
 
         setTimeout(_ => {
 
           let newLabel = {name: labels[i], color: blue}
-          log({newLabel: newLabel})
-          i = i + 1
+          log('ensuring ', newLabel.name)
+
+          i++
 
           ghIssues.createLabel(newLabel)
+
             .then(ghLabel => {
-              log({ghLabel: ghLabel})
-              ghLabels.push(ghLabel)
-              upsertGitHubLabels(i)  // recurse
+              return upsertGitHubLabel(i)  // recurse
             })
+
             .catch(ghErr => {
               try {
                 if (ghErr.response.data.errors[0].code == 'already_exists') {
-                  log('already exists')
-                  upsertGitHubLabels(i)  // recurse              }
+                  return upsertGitHubLabel(i)  // recurse
                 }
               }
-              catch (e) { return reject(ghErr) }
+              catch (propertyNotFoundErr) {
+                return reject(ghErr) // unexpected err
+              }
             })
         }, sleep)
+
       } else {
-        return resolve(ghLabels)
+        return resolve()  // done
       }
     }
 
@@ -186,22 +187,29 @@ function createGitHubIssues(issues) {
   let results = {issues: [], errors: []}
   const sleep = 100
 
-  function insertIssue(i) {
-    log('inserting issue ', i)
-    setTimeout(function() {
-      if (i < proms.length) {
-        log('i:', i)
-        proms[i]
-           .then(issue => {
-             log('proms issue.Summary', issue.Summary)
-             results.issues.push(issue)
-             insertIssue(++i)
-           })
-           .catch(err => {
-             log('proms err', err)
-             results.errors.push(err)
-             insertIssue(++i)
-           })
+  return new Promise(function(resolve, reject) {
+
+    function insertIssue(i) {
+
+      if (issues[i] && i < (issues.length -1)) {
+
+        setTimeout(_ => {
+          let newIssue = issues[i]
+          log('inserting issue ', newIssue.title)
+
+          ghIssues.createIssue(newIssue)
+             .then(ghIssue => {
+               log('created', ghIssue.title)
+               results.issues.push(ghIssue)
+               return insertIssue(++i)
+             })
+             .catch(err => {
+               log('error creating issue', newIssue.title)
+               results.errors.push(err)
+               return insertIssue(++i)
+             })
+        }, sleep)
+
       } else {
         if (results.issues.length) {
           return resolve(results)
@@ -209,8 +217,11 @@ function createGitHubIssues(issues) {
           return reject(results)
         }
       }
-    }, sleep)
-  }
+    }
+
+    // kick it off
+    insertIssue(0)
+  })
 
 }
 
