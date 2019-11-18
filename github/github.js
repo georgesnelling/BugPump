@@ -137,6 +137,8 @@ function upsertGitHubLabels(labels) {
 
   return new Promise(function(resolve, reject) {
 
+    let ghLabels = []
+
     function upsertGitHubLabel(i) {
 
       const blue = '0000ff'
@@ -147,19 +149,21 @@ function upsertGitHubLabels(labels) {
         setTimeout(_ => {
 
           let newLabel = {name: labels[i], color: blue}
-          log('ensuring ', newLabel.name)
+          log('ensuring', newLabel.name)
 
           i++
 
           ghIssues.createLabel(newLabel)
 
-            .then(ghLabel => {
+            .then(resp => {
+              ghLabels.push(resp.data.name)
               return upsertGitHubLabel(i)  // recurse
             })
 
             .catch(ghErr => {
               try {
                 if (ghErr.response.data.errors[0].code == 'already_exists') {
+                  ghLabels.push(newLabel.name)
                   return upsertGitHubLabel(i)  // recurse
                 }
               }
@@ -170,7 +174,7 @@ function upsertGitHubLabels(labels) {
         }, sleep)
 
       } else {
-        return resolve()  // done
+        return resolve(ghLabels)  // done
       }
     }
 
@@ -191,21 +195,20 @@ function createGitHubIssues(issues) {
 
     function insertIssue(i) {
 
-      if (issues[i] && i < (issues.length -1)) {
-
+      if (issues[i] && i < (issues.length -1) && i < 5 ) {
         setTimeout(_ => {
           let newIssue = issues[i]
-          log('inserting issue ', newIssue.title)
+          log('inserting issue', newIssue.title)
 
           ghIssues.createIssue(newIssue)
-             .then(ghIssue => {
-               log('created', ghIssue.title)
-               results.issues.push(ghIssue)
+             .then(resp => {
+               log('inserted')
+               results.issues.push(resp.data)
                return insertIssue(++i)
              })
              .catch(err => {
                log('error creating issue', newIssue.title)
-               results.errors.push(err)
+               results.errors.push({ request: err.request, error: err.response.data })
                return insertIssue(++i)
              })
         }, sleep)
@@ -238,7 +241,7 @@ let log = console.log
 
 // don't panic, just die
 let die = function(err) {
-  console.error(util.inspect(err, {depth: 4}))
+  console.error(util.inspect(err, {depth: 6}))
   process.exit(1)
 }
 
@@ -272,7 +275,7 @@ function main() {
       log({ghLabels: labels})
       return createGitHubIssues(issues)
     })
-    .then(results => log({results: results}))
+    .then(results => log(util.inspect({results: results}, {depth:6})))
     .catch(err => { die(err) })
 }
 
