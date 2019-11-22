@@ -7,10 +7,10 @@ const _ = require('lodash')
 const util = require('util')
 
 // which repo
-const owner = 'georgesnelling'
-const repo = 'testissues'
-// const owner = 'lyft'
-// const repo = 'flyte'
+// const owner = 'georgesnelling'
+// const repo = 'testissues'
+const owner = 'lyft'
+const repo = 'flyte'
 const jiraFile = 'jiras.csv'
 
 // sleep interval in ms between github calls to prevent rate limiting
