@@ -1,0 +1,43 @@
+{
+  "jiraFile": "jiras.csv",
+  "repoOwner": "lyft",
+  "repoName": "flyte",
+
+  "userMap": {
+    "achan": "chanadian",
+    "ssingh": "surindersinghp",
+    "krogan": "katrogan",
+    "ytong": "wild-endeavor",
+    "rschott": "schottra",
+    "aswaminathan": "anandswaminathan",
+    "jburns": "jonathanburns",
+    "kumare": "kumare3",
+    "matthewsmith": "matthewphsmith",
+    "akhurana": "akhurana001",
+    "changhonghsu": "bnsblue",
+    "habuelfutuh": "enghabu",
+    "gsnelling": "georgesnelling",
+    "mweagle": "mweagle"
+  },
+
+  "epicMap": {
+    "MB-1924": "polish",
+    "MB-1921": "cost",
+    "MB-1867": "oss",
+    "MB-1848": "compliance",
+    "MB-1838": "compliance",
+    "MB-1737": "documentation",
+    "MB-1564": "polish",
+    "MB-1563": "later",
+    "MB-1525": "trust",
+    "MB-1524": "compliance",
+    "MB-1519": "compatibility"
+  },
+
+  "priorityMap": {
+    "Blocker": "Pri0",
+    "Critical": "Pri1",
+    "Major": "Pri2",
+    "Minor": "Pri3"
+  }
+}

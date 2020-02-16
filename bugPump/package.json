@@ -14,8 +14,9 @@
     }
   ],
   "dependencies": {
-    "github-api": "*",
+    "@types/node": "^13.7.1",
     "csv-parser": "*",
+    "github-api": "*",
     "lodash": "*"
   }
 }

@@ -1,0 +1,10 @@
+Issue key,Issue id,Summary,Custom field (Epic Link),Description,Reporter,Assignee,Priority
+MB-1677,911344,Create public-facing distro list to use as email address for Flyte packages,MB-1525,"It's common for package registries to have an author/email associated with a package, and these email addresses are usually public.
+
+ 
+
+For FlyteIDL, Randy is listed as the author on NPM. This would present a problem if Randy were to leave the company and suddenly the email address is going to the void :)
+
+We should create a publicly-visible distribution list that can be used as a package author contact for things like pypi/npm.
+
+ ",rschott,gsnelling,Major
